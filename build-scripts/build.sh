@@ -3,6 +3,7 @@
 ## Setup Conda environment
 conda create --solver libmamba -y -n CLEVER
 conda activate CLEVER
+conda install -y anaconda::wget
 conda install -y bioconda::prodigal
 conda install -y bioconda::cd-hit
 conda install -y bioconda::diamond
