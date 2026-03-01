@@ -1,6 +1,7 @@
 #!/bin/bash
 
 ## Setup Conda environment
+echo "Creating conda environment..."
 conda create --solver libmamba -y -n CLEVER
 conda activate CLEVER
 conda install -y anaconda::wget
@@ -19,6 +20,7 @@ VERSION=1
 CLEVER_ANNOTATION='clever_annotation_2026-03-01.txt'
 
 ## Prepare ResFinder files
+echo "Preparing ResFinder..."
 mkdir dbs/ResFinder
 wget $RESFINDER\all.fsa
 wget $RESFINDER\VERSION
@@ -31,6 +33,7 @@ sed -i "s/\*//g" dbs/ResFinder/all.faa
 sed -i "s/^>/>ResFinder-/" dbs/ResFinder/all.faa
 
 ## Prepare CARD files
+echo "Preparing CARD..."
 mkdir dbs/CARD
 wget $CARD
 mv *.tar.bz2 dbs/CARD/
@@ -49,25 +52,31 @@ cat dbs/CARD/protein_fasta_protein_knockout_model.fasta dbs/CARD/protein_fasta_p
 sed -i "s/^>/>CARD-/" dbs/CARD/protein_fasta_protein_homolog_model.fasta
 
 ## Prepare ResFinderFG files
+echo "Preparing ResFinderFG..."
 mkdir dbs/ResFinderFG
 wget $RESFINDERFG
 mv ResFinder_FG_AA.faa dbs/ResFinderFG/
 sed -i "s/^>/>ResFinderFG-/" dbs/ResFinderFG/ResFinder_FG_AA.faa
 
 ## Prepare fARGene predictions from Inda-Diaz et al 2023
+echo "Preparing other sources..."
+echo "   - Inda-Diaz 2023"
 prodigal -q -a dbs/Other_sources/Inda-Diaz_2023.faa -i dbs/Other_sources/Inda-Diaz_2023.fasta
 sed -i "s/\*//g" dbs/Other_sources/Inda-Diaz_2023.faa
 sed -i "s/^>/>Inda-Diaz_2023-/" dbs/Other_sources/Inda-Diaz_2023.faa
 
 ## Merge all other sources into one file
+echo "   merging..."
 cat dbs/Other_sources/*.faa > Other_sources.faa
 
 ## Prepare PLSDB files
+echo "Preparing PLSDB..."
 mkdir dbs/PLSDB
 wget $PLSDB
 mv download_fasta dbs/PLSDB/plsdb.fna
 
 ## Match and cluster VARIANT database (100% identity)
+echo "Creating variant database..."
 diamond makedb --in dbs/CLEVER/CLEVER.variants.faa --db CLEVER --ignore-warnings
 diamond blastp -q dbs/ResFinder/all.faa --db CLEVER -o ResFinder_vs_CLEVER.blastp --id 100 --query-cover 99 --subject-cover 99 --outfmt 6 --un ResFinder_unique.faa
 cat dbs/CLEVER/CLEVER.variants.faa ResFinder_unique.faa > ResFinder.faa
@@ -90,6 +99,7 @@ mv *dmnd VARIANTS/
 mv *blastp VARIANTS/
 
 ## Match and cluster FAMILIES database (90% identity)
+echo "Creating families database..."
 #diamond makedb --in dbs/ResFinder/all.faa --db ResFinder --ignore-warnings
 ## If this is an update to the database, do this:
 diamond makedb --in dbs/CLEVER/CLEVER.families.faa --db CLEVER --ignore-warnings
@@ -118,6 +128,7 @@ mv *blastp FAMILIES/
 mv *clstr FAMILIES/
 
 ## Match and cluster LINEAGES database (70% identity)
+echo "Creating lineages database..."
 #diamond makedb --in dbs/ResFinder/all.faa --db ResFinder --ignore-warnings
 ## If this is an update to the database, do this:
 diamond makedb --in dbs/CLEVER/CLEVER.lineages.faa --db CLEVER --ignore-warnings
@@ -147,11 +158,13 @@ mv *clstr LINEAGES/
 
 
 ## Collect databases
+echo "Collecting databases..."
 cp VARIANTS/CLEVER.variants.faa .
 cp FAMILIES/CLEVER.families.faa .
 cp LINEAGES/CLEVER.lineages.faa .
 
 ## Check which genes exist on plasmids
+echo "Identifying mobile ARGs..."
 makeblastdb -dbtype nucl -out PLSDB -in dbs/PLSDB/plsdb.fna
 tblastn -db PLSDB -query CLEVER.variants.faa -out CLEVER.variants.vs.PLSDB.tblastn -outfmt 6 -num_threads 64 -evalue 1e-30
 tblastn -db PLSDB -query CLEVER.families.faa -out CLEVER.families.vs.PLSDB.tblastn -outfmt 6 -num_threads 64 -evalue 1e-30
@@ -162,6 +175,7 @@ perl build-scripts/filter_blast.pl CLEVER.families.vs.PLSDB.tblastn 90
 perl build-scripts/filter_blast.pl CLEVER.variants.vs.PLSDB.tblastn 98
 
 ## Make gene annotations
+echo "Annotating ARGs..."
 diamond makedb --in dbs/CLEVER/CLEVER.families.faa --db CLEVER.families --ignore-warnings
 diamond blastp -q CLEVER.variants.faa --db CLEVER.families -o CLEVER_vs_families.blastp --id 90 --query-cover 90 --subject-cover 90 --outfmt 6
 perl build-scrpts/annotate_args.pl CLEVER_vs_families.blastp blacklist.txt $VERSION
@@ -171,6 +185,7 @@ perl build-scrpts/rename_fasta.pl CLEVER.families.faa $CLEVER_ANNOTATION CLEVER.
 perl build-scrpts/rename_fasta.pl CLEVER.lineages.faa $CLEVER_ANNOTATION CLEVER.lineages.vs.PLSDB.tblastn.hits.txt $VERSION > CLEVER.lineages.final.faa
 
 ## Finalize CLEVER build
+echo "Finalizing CLEVER build..."
 cat CLEVER.variants.final.faa | grep ">" | sed "s/^>//" | sed "s/ /\t/g" > CLEVER.variants.tsv
 cat CLEVER.families.final.faa | grep ">" | sed "s/^>//" | sed "s/ /\t/g" > CLEVER.families.tsv
 cat CLEVER.lineages.final.faa | grep ">" | sed "s/^>//" | sed "s/ /\t/g" > CLEVER.lineages.tsv
@@ -183,4 +198,5 @@ mv CLEVER_vs_families.blastp.mapping.txt CLEVER-build/CLEVER.variant-family-mapp
 
 tar -czvf CLEVER.tgz CLEVER-build/
 
-echo 'Your new build of CLEVER is located in CLEVER-build/'
+echo "Done!"
+echo "Your new build of CLEVER is located in CLEVER-build/"
