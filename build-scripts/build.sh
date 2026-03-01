@@ -164,12 +164,16 @@ cp FAMILIES/CLEVER.families.faa .
 cp LINEAGES/CLEVER.lineages.faa .
 
 ## Check which genes exist on plasmids
-echo "Identifying mobile ARGs..."
+echo "Building plasmid database..."
 makeblastdb -dbtype nucl -out PLSDB -in dbs/PLSDB/plsdb.fna
+echo "Identifying mobile ARG variants..."
 tblastn -db PLSDB -query CLEVER.variants.faa -out CLEVER.variants.vs.PLSDB.tblastn -outfmt 6 -num_threads 64 -evalue 1e-30
+echo "Identifying mobile ARG families..."
 tblastn -db PLSDB -query CLEVER.families.faa -out CLEVER.families.vs.PLSDB.tblastn -outfmt 6 -num_threads 64 -evalue 1e-30
+echo "Identifying mobile ARG lineages..."
 tblastn -db PLSDB -query CLEVER.lineages.faa -out CLEVER.lineages.vs.PLSDB.tblastn -outfmt 6 -num_threads 64 -evalue 1e-30
 
+echo "Filtering results..."
 perl build-scripts/filter_blast.pl CLEVER.lineages.vs.PLSDB.tblastn 70
 perl build-scripts/filter_blast.pl CLEVER.families.vs.PLSDB.tblastn 90
 perl build-scripts/filter_blast.pl CLEVER.variants.vs.PLSDB.tblastn 98
