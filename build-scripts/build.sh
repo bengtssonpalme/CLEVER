@@ -104,21 +104,22 @@ echo "Creating families database..."
 ## If this is an update to the database, do this:
 diamond makedb --in dbs/CLEVER/CLEVER.families.faa --db CLEVER --ignore-warnings
 diamond blastp -q dbs/ResFinder/all.faa --db CLEVER -o ResFinder_vs_CLEVER.blastp --id 90 --query-cover 90 --subject-cover 90 --outfmt 6 --un ResFinder_unique.faa
-cat dbs/CLEVER/CLEVER.families.faa ResFinder_unique.faa > ResFinder.faa
+cd-hit -i ResFinder_unique.faa -o ResFinder_clustered.faa -c 0.9 -n 5 -aS 0.9 -aL 0.9 -d 0
+cat dbs/CLEVER/CLEVER.families.faa ResFinder_clustered.faa > ResFinder.faa
 diamond makedb --in ResFinder.faa --db ResFinder --ignore-warnings
 diamond blastp -q dbs/CARD/protein_fasta_protein_homolog_model.fasta --db ResFinder -o CARD_vs_ResFinder.blastp --id 90 --query-cover 90 --subject-cover 90 --outfmt 6 --un CARD_unique.faa
 diamond makedb --in dbs/CARD/not_ARGs.fasta --db CARD_NOT_ARGs --ignore-warnings
 diamond blastp -q CARD_unique.faa --db CARD_NOT_ARGs -o CARD_vs_CARD_NON_ARGs.blastp --id 70 --query-cover 70 --subject-cover 70 --outfmt 6 --un CARD_filtered.faa
 cd-hit -i CARD_filtered.faa -o CARD_clustered.faa -c 0.9 -n 5 -aS 0.9 -aL 0.9 -d 0
-cat ResFinder_clustered.faa CARD_clustered.faa > ResFinder+CARD.faa
+cat dbs/CLEVER/CLEVER.families.faa ResFinder_clustered.faa CARD_clustered.faa > ResFinder+CARD.faa
 diamond makedb --in ResFinder+CARD.faa --db ResFinder+CARD --ignore-warnings
 diamond blastp -q dbs/ResFinderFG/ResFinder_FG_AA.faa --db ResFinder+CARD -o ResFinderFG_vs_ResFinder+CARD.blastp  --id 90 --query-cover 90 --subject-cover 90 --outfmt 6 --un ResFinderFG_unique.faa
 cd-hit -i ResFinderFG_unique.faa -o ResFinderFG_clustered.faa -c 0.9 -n 5 -aS 0.9 -aL 0.9 -d 0
-cat ResFinder_clustered.faa CARD_clustered.faa ResFinderFG_clustered.faa > ResFinder+CARD+FG.faa
+cat dbs/CLEVER/CLEVER.families.faa ResFinder_clustered.faa CARD_clustered.faa ResFinderFG_clustered.faa > ResFinder+CARD+FG.faa
 diamond makedb --in ResFinder+CARD+FG.faa --db ResFinder+CARD+FG --ignore-warnings
 diamond blastp -q Other_sources.faa --db ResFinder+CARD+FG -o OS_vs_ResFinder+CARD+OS.blastp --id 90 --query-cover 90 --subject-cover 90 --outfmt 6 --un OS_unique.faa
 cd-hit -i OS_unique.faa -o OS_clustered.faa -c 0.9 -n 5 -aS 0.9 -aL 0.9 -d 0
-cat ResFinder_clustered.faa CARD_clustered.faa ResFinderFG_clustered.faa OS_clustered.faa > ResFinder+CARD+FG+OS.faa
+cat dbs/CLEVER/CLEVER.families.faa ResFinder_clustered.faa CARD_clustered.faa ResFinderFG_clustered.faa OS_clustered.faa > ResFinder+CARD+FG+OS.faa
 diamond makedb --in ResFinder+CARD+FG+OS.faa --db ResFinder+CARD+FG+OS --ignore-warnings
 cp ResFinder+CARD+FG+OS.faa CLEVER.families.faa
 mkdir FAMILIES
@@ -133,21 +134,22 @@ echo "Creating lineages database..."
 ## If this is an update to the database, do this:
 diamond makedb --in dbs/CLEVER/CLEVER.lineages.faa --db CLEVER --ignore-warnings
 diamond blastp -q dbs/ResFinder/all.faa --db CLEVER -o ResFinder_vs_CLEVER.blastp --id 70 --query-cover 70 --subject-cover 70 --outfmt 6 --un ResFinder_unique.faa
-cat dbs/CLEVER/CLEVER.lineages.faa ResFinder_unique.faa > ResFinder.faa
+cd-hit -i ResFinder_unique.faa -o ResFinder_clustered.faa -c 0.7 -n 4 -aS 0.7 -aL 0.7 -d 0
+cat dbs/CLEVER/CLEVER.lineages.faa ResFinder_clustered.faa > ResFinder.faa
 diamond makedb --in ResFinder.faa --db ResFinder --ignore-warnings
 diamond blastp -q dbs/CARD/protein_fasta_protein_homolog_model.fasta --db ResFinder -o CARD_vs_ResFinder.blastp --id 70 --query-cover 70 --subject-cover 70 --outfmt 6 --un CARD_unique.faa
 diamond makedb --in dbs/CARD/not_ARGs.fasta --db CARD_NOT_ARGs --ignore-warnings
 diamond blastp -q CARD_unique.faa --db CARD_NOT_ARGs -o CARD_vs_CARD_NON_ARGs.blastp --id 70 --query-cover 70 --subject-cover 70 --outfmt 6 --un CARD_filtered.faa
 cd-hit -i CARD_filtered.faa -o CARD_clustered.faa -c 0.7 -n 4 -aS 0.7 -aL 0.7 -d 0
-cat ResFinder_clustered.faa CARD_clustered.faa > ResFinder+CARD.faa
+cat dbs/CLEVER/CLEVER.lineages.faa ResFinder_clustered.faa CARD_clustered.faa > ResFinder+CARD.faa
 diamond makedb --in ResFinder+CARD.faa --db ResFinder+CARD --ignore-warnings
 diamond blastp -q dbs/ResFinderFG/ResFinder_FG_AA.faa --db ResFinder+CARD -o ResFinderFG_vs_ResFinder+CARD.blastp  --id 70 --query-cover 70 --subject-cover 70 --outfmt 6 --un ResFinderFG_unique.faa
 cd-hit -i ResFinderFG_unique.faa -o ResFinderFG_clustered.faa -c 0.7 -n 4 -aS 0.7 -aL 0.7 -d 0
-cat ResFinder_clustered.faa CARD_clustered.faa ResFinderFG_clustered.faa > ResFinder+CARD+FG.faa
+cat dbs/CLEVER/CLEVER.lineages.faa ResFinder_clustered.faa CARD_clustered.faa ResFinderFG_clustered.faa > ResFinder+CARD+FG.faa
 diamond makedb --in ResFinder+CARD+FG.faa --db ResFinder+CARD+FG --ignore-warnings
 diamond blastp -q Other_sources.faa --db ResFinder+CARD+FG -o OS_vs_ResFinder+CARD+FG.blastp --id 70 --query-cover 70 --subject-cover 70 --outfmt 6 --un OS_unique.faa
 cd-hit -i OS_unique.faa -o OS_clustered.faa -c 0.7 -n 4 -aS 0.7 -aL 0.7 -d 0
-cat ResFinder_clustered.faa CARD_clustered.faa ResFinderFG_clustered.faa OS_clustered.faa > ResFinder+CARD+FG+OS.faa
+cat dbs/CLEVER/CLEVER.lineages.faa ResFinder_clustered.faa CARD_clustered.faa ResFinderFG_clustered.faa OS_clustered.faa > ResFinder+CARD+FG+OS.faa
 diamond makedb --in ResFinder+CARD+FG+OS.faa --db ResFinder+CARD+FG+OS --ignore-warnings
 cp ResFinder+CARD+FG+OS.faa CLEVER.lineages.faa
 mkdir LINEAGES
