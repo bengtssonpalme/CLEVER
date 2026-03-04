@@ -184,11 +184,11 @@ perl build-scripts/filter_blast.pl CLEVER.variants.vs.PLSDB.tblastn 98
 echo "Annotating ARGs..."
 diamond makedb --in dbs/CLEVER/CLEVER.families.faa --db CLEVER.families --ignore-warnings
 diamond blastp -q CLEVER.variants.faa --db CLEVER.families -o CLEVER_vs_families.blastp --id 90 --query-cover 90 --subject-cover 90 --outfmt 6
-perl build-scrpts/annotate_args.pl CLEVER_vs_families.blastp blacklist.txt $VERSION
+perl build-scripts/annotate_args.pl CLEVER_vs_families.blastp blacklist.txt $VERSION
 
-perl build-scrpts/rename_fasta.pl CLEVER.variants.faa $CLEVER_ANNOTATION CLEVER.variants.vs.PLSDB.tblastn.hits.txt $VERSION > CLEVER.variants.final.faa
-perl build-scrpts/rename_fasta.pl CLEVER.families.faa $CLEVER_ANNOTATION CLEVER.families.vs.PLSDB.tblastn.hits.txt $VERSION > CLEVER.families.final.faa
-perl build-scrpts/rename_fasta.pl CLEVER.lineages.faa $CLEVER_ANNOTATION CLEVER.lineages.vs.PLSDB.tblastn.hits.txt $VERSION > CLEVER.lineages.final.faa
+perl build-scripts/rename_fasta.pl CLEVER.variants.faa $CLEVER_ANNOTATION CLEVER.variants.vs.PLSDB.tblastn.hits.txt $VERSION > CLEVER.variants.final.faa
+perl build-scripts/rename_fasta.pl CLEVER.families.faa $CLEVER_ANNOTATION CLEVER.families.vs.PLSDB.tblastn.hits.txt $VERSION > CLEVER.families.final.faa
+perl build-scripts/rename_fasta.pl CLEVER.lineages.faa $CLEVER_ANNOTATION CLEVER.lineages.vs.PLSDB.tblastn.hits.txt $VERSION > CLEVER.lineages.final.faa
 
 ## Finalize CLEVER build
 echo "Finalizing CLEVER build..."
