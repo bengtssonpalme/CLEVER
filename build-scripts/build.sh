@@ -28,7 +28,7 @@ wget $RESFINDER\phenotypes.txt
 mv all.fsa dbs/ResFinder/
 mv VERSION dbs/ResFinder/
 mv phenotypes.txt dbs/ResFinder/
-prodigal -q -a dbs/ResFinder/all.faa -i dbs/ResFinder/all.fsa
+prodigal -q -a dbs/ResFinder/all.faa -i dbs/ResFinder/all.fsa >> progigal_log.txt
 sed -i "s/\*//g" dbs/ResFinder/all.faa
 sed -i "s/^>/>ResFinder-/" dbs/ResFinder/all.faa
 
@@ -61,7 +61,7 @@ sed -i "s/^>/>ResFinderFG-/" dbs/ResFinderFG/ResFinder_FG_AA.faa
 ## Prepare fARGene predictions from Inda-Diaz et al 2023
 echo "Preparing other sources..."
 echo "   - Inda-Diaz 2023"
-prodigal -q -a dbs/Other_sources/Inda-Diaz_2023.faa -i dbs/Other_sources/Inda-Diaz_2023.fasta
+prodigal -q -a dbs/Other_sources/Inda-Diaz_2023.faa -i dbs/Other_sources/Inda-Diaz_2023.fasta >> progigal_log.txt
 sed -i "s/\*//g" dbs/Other_sources/Inda-Diaz_2023.faa
 sed -i "s/^>/>Inda-Diaz_2023-/" dbs/Other_sources/Inda-Diaz_2023.faa
 
