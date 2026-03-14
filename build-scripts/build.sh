@@ -89,13 +89,13 @@ diamond makedb --in ResFinder.faa --db ResFinder --ignore-warnings
 diamond blastp -q dbs/CARD/protein_fasta_protein_homolog_model.fasta --db ResFinder -o CARD_vs_ResFinder.blastp --id 100 --query-cover 99 --subject-cover 99 --masking none --outfmt 6 --un CARD_unique.faa
 diamond makedb --in dbs/CARD/not_ARGs.fasta --db CARD_NOT_ARGs --ignore-warnings
 diamond blastp -q CARD_unique.faa --db CARD_NOT_ARGs -o CARD_vs_CARD_NON_ARGs.blastp --id 70 --query-cover 80 --subject-cover 80 --masking none --outfmt 6 --un CARD_filtered.faa
-cat dbs/ResFinder/all.faa CARD_filtered.faa > ResFinder+CARD.faa
+cat ResFinder.faa CARD_filtered.faa > ResFinder+CARD.faa
 diamond makedb --in ResFinder+CARD.faa --db ResFinder+CARD --ignore-warnings
 diamond blastp -q dbs/ResFinderFG/ResFinder_FG_AA.faa --db ResFinder+CARD -o ResFinderFG_vs_ResFinder+CARD.blastp  --id 100 --query-cover 99 --subject-cover 99 --masking none --outfmt 6 --un ResFinderFG_unique.faa
-cat dbs/ResFinder/all.faa CARD_filtered.faa ResFinderFG_unique.faa > ResFinder+CARD+FG.faa
+cat ResFinder.faa CARD_filtered.faa ResFinderFG_unique.faa > ResFinder+CARD+FG.faa
 diamond makedb --in ResFinder+CARD+FG.faa --db ResFinder+CARD+FG --ignore-warnings
 diamond blastp -q Other_sources.faa --db ResFinder+CARD+FG -o OS_vs_ResFinder+CARD+OS.blastp --id 100 --query-cover 99 --subject-cover 99 --masking none --outfmt 6 --un OS_unique.faa
-cat dbs/ResFinder/all.faa CARD_filtered.faa ResFinderFG_unique.faa OS_unique.faa > ResFinder+CARD+FG+OS.faa
+cat ResFinder.faa CARD_filtered.faa ResFinderFG_unique.faa OS_unique.faa > ResFinder+CARD+FG+OS.faa
 diamond makedb --in ResFinder+CARD+FG+OS.faa --db ResFinder+CARD+FG+OS --ignore-warnings
 cp ResFinder+CARD+FG+OS.faa CLEVER.variants.faa
 mkdir VARIANTS
