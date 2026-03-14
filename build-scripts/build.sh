@@ -8,7 +8,7 @@ PLSDB='https://ccb-microbe.cs.uni-saarland.de/plsdb2025/download_fasta'
 VERSION=1
 CLEVER_ANNOTATION='clever_annotation_2026-03-01.txt'
 
-if [ $1 -eq "ONLYBUILD" ]; then
+if [ $1 == "ONLYBUILD" ]; then
     echo "Skipping conda setup and downloading"
 else
   ## Setup Conda environment
