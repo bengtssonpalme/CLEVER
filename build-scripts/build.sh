@@ -195,9 +195,9 @@ perl build-scripts/annotate_args.pl CLEVER_vs_families.blastp blacklist.txt $VER
 perl build-scripts/create_annotation_file.pl CLEVER_vs_families.blastp.genelist.txt dbs/CLEVER/$CLEVER_ANNOTATION > clever_annotation_manformat.txt
 
 ## Update headers of FASTA files
-perl build-scripts/rename_fasta.pl CLEVER.variants.faa clever_annotation_manformat.txt CLEVER.variants.vs.PLSDB.tblastn.hits.txt $VERSION > CLEVER.variants.final.faa
-perl build-scripts/rename_fasta.pl CLEVER.families.faa clever_annotation_manformat.txt CLEVER.families.vs.PLSDB.tblastn.hits.txt $VERSION > CLEVER.families.final.faa
-perl build-scripts/rename_fasta.pl CLEVER.lineages.faa clever_annotation_manformat.txt CLEVER.lineages.vs.PLSDB.tblastn.hits.txt $VERSION > CLEVER.lineages.final.faa
+perl build-scripts/rename_fasta.pl CLEVER.variants.faa clever_annotation_manformat.txt CLEVER.variants.vs.PLSDB.tblastn.hits.txt blacklist.txt $VERSION > CLEVER.variants.final.faa
+perl build-scripts/rename_fasta.pl CLEVER.families.faa clever_annotation_manformat.txt CLEVER.families.vs.PLSDB.tblastn.hits.txt blacklist.txt $VERSION > CLEVER.families.final.faa
+perl build-scripts/rename_fasta.pl CLEVER.lineages.faa clever_annotation_manformat.txt CLEVER.lineages.vs.PLSDB.tblastn.hits.txt blacklist.txt $VERSION > CLEVER.lineages.final.faa
 
 ## Finalize CLEVER build
 echo "Finalizing CLEVER build..."
