@@ -206,7 +206,8 @@ cat CLEVER.families.final.faa | grep ">" | sed "s/^>//" | sed "s/ /\t/g" > CLEVE
 cat CLEVER.lineages.final.faa | grep ">" | sed "s/^>//" | sed "s/ /\t/g" > CLEVER.lineages.tsv
 
 ## Helping the user a bit to more easily being able to do manual curation
-cat CLEVER.variants.tsv | sed "s/$/\tV/" | sed "s/\(.*\)\t\t\(.*\)$/\1\t\t\2\t\*/" > CLEVER_annotation.txt
+echo "ID\tGene_name\tEstablished\tMobile\tVerified\tSource\tORG-ID\tLevel\tProblem" > CLEVER_annotation.txt
+cat CLEVER.variants.tsv | sed "s/$/\tV/" | sed "s/\(.*\)\t\t\(.*\)$/\1\t\t\2\t\*/" >> CLEVER_annotation.txt
 cat CLEVER.families.tsv | sed "s/$/\tF/" | sed "s/\(.*\)\t\t\(.*\)$/\1\t\t\2\t\*/" >> CLEVER_annotation.txt
 cat CLEVER.lineages.tsv | sed "s/$/\tL/" | sed "s/\(.*\)\t\t\(.*\)$/\1\t\t\2\t\*/" >> CLEVER_annotation.txt
 
