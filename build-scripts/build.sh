@@ -205,6 +205,11 @@ cat CLEVER.variants.final.faa | grep ">" | sed "s/^>//" | sed "s/ /\t/g" > CLEVE
 cat CLEVER.families.final.faa | grep ">" | sed "s/^>//" | sed "s/ /\t/g" > CLEVER.families.tsv
 cat CLEVER.lineages.final.faa | grep ">" | sed "s/^>//" | sed "s/ /\t/g" > CLEVER.lineages.tsv
 
+## Helping the user a bit to more easily being able to do manual curation
+cat CLEVER.variants.tsv | sed "s/$/\tV/" | sed "s/\(.*\)\t\t\(.*\)$/\1\t\t\2\t\*/" > CLEVER_annotation.txt
+cat CLEVER.families.tsv | sed "s/$/\tF/" | sed "s/\(.*\)\t\t\(.*\)$/\1\t\t\2\t\*/" >> CLEVER_annotation.txt
+cat CLEVER.lineages.tsv | sed "s/$/\tL/" | sed "s/\(.*\)\t\t\(.*\)$/\1\t\t\2\t\*/" >> CLEVER_annotation.txt
+
 ## Saving sequence IDs to check from logs
 cat *log* | grep " : " | cut -f 1 -d " " > entries_to_check_manually.txt
 
@@ -218,3 +223,5 @@ tar -czvf CLEVER.tgz CLEVER-build/
 
 echo "Done!"
 echo "Your new build of CLEVER is located in CLEVER-build/"
+echo "Remember to check the CLEVER_annotation.txt file for manual curation"
+echo "and then run the 'update_database_post_curation.pl' script to finalize."
