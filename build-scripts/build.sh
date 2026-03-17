@@ -205,6 +205,9 @@ cat CLEVER.variants.final.faa | grep ">" | sed "s/^>//" | sed "s/ /\t/g" > CLEVE
 cat CLEVER.families.final.faa | grep ">" | sed "s/^>//" | sed "s/ /\t/g" > CLEVER.families.tsv
 cat CLEVER.lineages.final.faa | grep ">" | sed "s/^>//" | sed "s/ /\t/g" > CLEVER.lineages.tsv
 
+## Saving sequence IDs to check from logs
+cat *log* | grep " : " | cut -f 1 -d " " > entries_to_check_manually.txt
+
 mv CLEVER.variants.final.faa CLEVER-build/CLEVER.variants.faa
 mv CLEVER.families.final.faa CLEVER-build/CLEVER.families.faa
 mv CLEVER.lineages.final.faa CLEVER-build/CLEVER.lineages.faa
