@@ -21,9 +21,9 @@ foreach $file (@changeFiles) {
 open (ORG, "$originalfile");
 open (NEW, "$updatedfile");
 
-open (VAR, ">$databaseFolder/CLEVER.variants.tsv.new");
-open (FAM, ">$databaseFolder/CLEVER.families.tsv.new");
-open (LIN, ">$databaseFolder/CLEVER.lineages.tsv.new");
+open (VAR, ">$databaseFolder/CLEVER.variants.tsv");
+open (FAM, ">$databaseFolder/CLEVER.families.tsv");
+open (LIN, ">$databaseFolder/CLEVER.lineages.tsv");
 
 while ($orgline = <ORG>) {
     chomp($orgline);
