@@ -100,15 +100,67 @@ foreach $family (@families) {
             push(@argNames, $argName);
             push(@accessions, $full_accession);
         }
-        if ($source eq "fARGene") {
-            #fARGene-20k_concatenated-long-orfs_SFKQ01000019.1_seq1@@@methyltransferase_grp2_1
-            ($seqinfo, $class)= split('@@@', $rest);
-            ($junk1,$junk2,$accession,$variant) = split('_', $seqinfo);
-            $argName = "~" . $class;
-            $full_accession = $accession;
-            push(@argNames, $argName);
-            push(@accessions, $full_accession);
-        }
+            if (($source eq "fARGene") || ($source eq "Inda-Diaz_2023")) {
+                #fARGene-20k_concatenated-long-orfs_SFKQ01000019.1_seq1@@@methyltransferase_grp2_1
+                ($seqinfo, $class)= split('@@@', $rest);
+                ($junk1,$junk2,$accession,$variant) = split('_', $seqinfo);
+                $argName = "!" . $class;
+                $full_accession = $accession;
+                push(@argNames, $argName);
+                push(@accessions, $full_accession);
+            }
+            if ($source eq "Victor_2025") {
+                #HiAAMG_A_sequ1ence
+                ($seqinfo, $junk) = split('_seq', $rest);
+                $class = substr($seqinfo, 3);
+                $accession = $rest;
+                $argName = "!" . $class;
+                $full_accession = $accession;
+                push(@argNames, $argName);
+                push(@accessions, $full_accession);
+            }
+            if ($source eq "Victor_2025b") {
+                #Class_ANSF1A
+                ($class, $junk) = split('NSF', $rest);
+                $accession = $rest;
+                $argName = "!" . $class;
+                $full_accession = $accession;
+                push(@argNames, $argName);
+                push(@accessions, $full_accession);
+            }
+            if ($source eq "Li_2025") {
+                #class_a|cattle|k141_371442_seq1_1
+                ($class, $animal, $accession) = split('\|', $rest);
+                $argName = "!" . $class;
+                $full_accession = $accession;
+                push(@argNames, $argName);
+                push(@accessions, $full_accession);
+            }
+            if ($source eq "Sommerville_2026") {
+                #>retrieved-translated_gene_catalog_Gene026555_seq1_1|class_A
+                ($accession,$class) = split('\|', $rest);
+                $argName = "!" . $class;
+                $full_accession = $accession;
+                push(@argNames, $argName);
+                push(@accessions, $full_accession);
+            }
+            if (($source eq "Mustard") || ($source eq "Ruppe_2019")) {
+                #1|311066|3|Human-Microbiome-3.9M-Gene-Catalog-(metahit-v2)|MC3.MG12.AS1.GP1.C65190.G5|aac2
+                ($x, $y, $z, $refcatalog, $accession, $class)= split('\|', $rest);
+                $argName = "!" . $class;
+                $full_accession = $accession;
+                push(@argNames, $argName);
+                push(@accessions, $full_accession);
+            }
+            if ($source eq "Wang_2025")) {
+                #DfrA52_XPO54507.1
+                ($geneName, $accession)= split('_', $rest);
+                $class = lc(substr($geneName, 0 ,3));
+                $argName = "!" . $geneName;
+                $full_accession = $accession;
+                push(@argNames, $argName);
+                push(@accessions, $full_accession);
+            }
     }
 
 ## Wanted output:
