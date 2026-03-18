@@ -61,12 +61,32 @@ else
   mv ResFinder_FG_AA.faa dbs/ResFinderFG/
   sed -i "s/^>/>ResFinderFG-/" dbs/ResFinderFG/ResFinder_FG_AA.faa
 
-  ## Prepare fARGene predictions from Inda-Diaz et al 2023
   echo "Preparing other sources..."
+  
+  ## Prepare fARGene predictions
   echo "   - Inda-Diaz 2023"
   prodigal -q -a dbs/Other_sources/Inda-Diaz_2023.faa -i dbs/Other_sources/Inda-Diaz_2023.fasta >> progigal_log.txt
   sed -i "s/\*//g" dbs/Other_sources/Inda-Diaz_2023.faa
   sed -i "s/^>/>Inda-Diaz_2023-/" dbs/Other_sources/Inda-Diaz_2023.faa
+  
+  echo "   - Victor 2025"
+  sed -i "s/^>/>Victor_2025-/" dbs/Other_sources/Victor_2025.faa
+  sed -i "s/^>/>Victor_2025b-/" dbs/Other_sources/Victor_2025b.faa
+
+  echo "   - Li 2025"
+  sed -i "s/^>/>Li_2025-/" dbs/Other_sources/Li_2025.faa
+
+  echo "   - Sommerville 2026"
+  sed -i "s/^>/>Sommerville_2026-/" dbs/Other_sources/Sommerville_2026.faa
+
+  ## Prepare Mustard predictions
+  #https://mgps.eu/Mustard/db/all_ard.zip
+  echo "   - Ruppe 2018"
+  sed -i "s/^>/>Ruppe_2018-/" dbs/Other_sources/Ruppe_2019.faa
+
+  echo "   - Wang 2025"
+  sed -i "s/^>/>Wang_2025-/" dbs/Other_sources/Wang_2025.faa
+  
 
   ## Merge all other sources into one file
   echo "   merging..."
