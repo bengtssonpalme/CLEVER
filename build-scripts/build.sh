@@ -5,8 +5,8 @@ RESFINDER='https://bitbucket.org/genomicepidemiology/resfinder_db/raw/eecf0aa207
 CARD='https://card.mcmaster.ca/download/0/broadstreet-v4.0.1.tar.bz2'
 RESFINDERFG='https://raw.githubusercontent.com/RemiGSC/ResFinder_FG_Construction/refs/heads/main/output/RFG_db/ResFinder_FG_AA.faa'
 PLSDB='https://ccb-microbe.cs.uni-saarland.de/plsdb2025/download_fasta'
-VERSION=1
-CLEVER_ANNOTATION='clever_annotation_2026-03-01.txt'
+VERSION=1.1
+CLEVER_ANNOTATION='CLEVER_annotation_curated_2026-03-18'
 
 if [ $1 == "ONLYBUILD" ]; then
     echo "Skipping conda setup and downloading"
