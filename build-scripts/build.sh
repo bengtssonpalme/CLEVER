@@ -81,8 +81,8 @@ else
 
   ## Prepare Mustard predictions
   #https://mgps.eu/Mustard/db/all_ard.zip
-  echo "   - Ruppe 2018"
-  sed -i "s/^>/>Ruppe_2018-/" dbs/Other_sources/Ruppe_2019.faa
+  echo "   - Ruppe 2019"
+  sed -i "s/^>/>Ruppe_2019-/" dbs/Other_sources/Ruppe_2019.faa
 
   echo "   - Wang 2025"
   sed -i "s/^>/>Wang_2025-/" dbs/Other_sources/Wang_2025.faa
