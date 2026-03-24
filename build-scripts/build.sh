@@ -88,9 +88,9 @@ else
   sed -i "s/^>/>Wang_2025-/" dbs/Other_sources/Wang_2025.faa
   
 
-  ## Merge all other sources into one file
+  ## Merge all  sources into one file
   echo "   merging..."
-  cat dbs/Other_sources/*.faa > Other_sources.faa
+  cat dbs/Other_sources/*.faa > dbs/Other_sources.faa
 
   ## Prepare PLSDB files
   echo "Preparing PLSDB..."
@@ -114,7 +114,7 @@ diamond makedb --in ResFinder+CARD.faa --db ResFinder+CARD --ignore-warnings
 diamond blastp -q dbs/ResFinderFG/ResFinder_FG_AA.faa --db ResFinder+CARD -o ResFinderFG_vs_ResFinder+CARD.blastp  --id 100 --query-cover 99 --subject-cover 99 --masking none --outfmt 6 --un ResFinderFG_unique.faa
 cat ResFinder.faa CARD_filtered.faa ResFinderFG_unique.faa > ResFinder+CARD+FG.faa
 diamond makedb --in ResFinder+CARD+FG.faa --db ResFinder+CARD+FG --ignore-warnings
-diamond blastp -q Other_sources.faa --db ResFinder+CARD+FG -o OS_vs_ResFinder+CARD+OS.blastp --id 100 --query-cover 99 --subject-cover 99 --masking none --outfmt 6 --un OS_unique.faa
+diamond blastp -q dbs/Other_sources.faa --db ResFinder+CARD+FG -o OS_vs_ResFinder+CARD+OS.blastp --id 100 --query-cover 99 --subject-cover 99 --masking none --outfmt 6 --un OS_unique.faa
 cat ResFinder.faa CARD_filtered.faa ResFinderFG_unique.faa OS_unique.faa > ResFinder+CARD+FG+OS.faa
 diamond makedb --in ResFinder+CARD+FG+OS.faa --db ResFinder+CARD+FG+OS --ignore-warnings
 cp ResFinder+CARD+FG+OS.faa CLEVER.variants.faa
@@ -142,7 +142,7 @@ diamond blastp -q dbs/ResFinderFG/ResFinder_FG_AA.faa --db ResFinder+CARD -o Res
 cd-hit -i ResFinderFG_unique.faa -o ResFinderFG_clustered.faa -c 0.9 -n 5 -aS 0.9 -aL 0.9 -d 0
 cat dbs/CLEVER/CLEVER.families.faa ResFinder_clustered.faa CARD_clustered.faa ResFinderFG_clustered.faa > ResFinder+CARD+FG.faa
 diamond makedb --in ResFinder+CARD+FG.faa --db ResFinder+CARD+FG --ignore-warnings
-diamond blastp -q Other_sources.faa --db ResFinder+CARD+FG -o OS_vs_ResFinder+CARD+OS.blastp --id 90 --query-cover 90 --subject-cover 90 --masking none --outfmt 6 --un OS_unique.faa
+diamond blastp -q dbs/Other_sources.faa --db ResFinder+CARD+FG -o OS_vs_ResFinder+CARD+OS.blastp --id 90 --query-cover 90 --subject-cover 90 --masking none --outfmt 6 --un OS_unique.faa
 cd-hit -i OS_unique.faa -o OS_clustered.faa -c 0.9 -n 5 -aS 0.9 -aL 0.9 -d 0
 cat dbs/CLEVER/CLEVER.families.faa ResFinder_clustered.faa CARD_clustered.faa ResFinderFG_clustered.faa OS_clustered.faa > ResFinder+CARD+FG+OS.faa
 diamond makedb --in ResFinder+CARD+FG+OS.faa --db ResFinder+CARD+FG+OS --ignore-warnings
@@ -172,7 +172,7 @@ diamond blastp -q dbs/ResFinderFG/ResFinder_FG_AA.faa --db ResFinder+CARD -o Res
 cd-hit -i ResFinderFG_unique.faa -o ResFinderFG_clustered.faa -c 0.7 -n 4 -aS 0.7 -aL 0.7 -d 0
 cat dbs/CLEVER/CLEVER.lineages.faa ResFinder_clustered.faa CARD_clustered.faa ResFinderFG_clustered.faa > ResFinder+CARD+FG.faa
 diamond makedb --in ResFinder+CARD+FG.faa --db ResFinder+CARD+FG --ignore-warnings
-diamond blastp -q Other_sources.faa --db ResFinder+CARD+FG -o OS_vs_ResFinder+CARD+FG.blastp --id 70 --query-cover 70 --subject-cover 70 --masking none --outfmt 6 --un OS_unique.faa
+diamond blastp -q dbs/Other_sources.faa --db ResFinder+CARD+FG -o OS_vs_ResFinder+CARD+FG.blastp --id 70 --query-cover 70 --subject-cover 70 --masking none --outfmt 6 --un OS_unique.faa
 cd-hit -i OS_unique.faa -o OS_clustered.faa -c 0.7 -n 4 -aS 0.7 -aL 0.7 -d 0
 cat dbs/CLEVER/CLEVER.lineages.faa ResFinder_clustered.faa CARD_clustered.faa ResFinderFG_clustered.faa OS_clustered.faa > ResFinder+CARD+FG+OS.faa
 diamond makedb --in ResFinder+CARD+FG+OS.faa --db ResFinder+CARD+FG+OS --ignore-warnings
