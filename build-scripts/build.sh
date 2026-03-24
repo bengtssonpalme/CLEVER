@@ -65,7 +65,7 @@ else
   
   ## Prepare fARGene predictions
   echo "   - Inda-Diaz 2023"
-  prodigal -q -a dbs/Other_sources/Inda-Diaz_2023.faa -i dbs/Other_sources/Inda-Diaz_2023.fasta >> progigal_log.txt
+  #prodigal -q -a dbs/Other_sources/Inda-Diaz_2023.faa -i dbs/Other_sources/Inda-Diaz_2023.fasta >> progigal_log.txt
   sed -i "s/\*//g" dbs/Other_sources/Inda-Diaz_2023.faa
   sed -i "s/^>/>Inda-Diaz_2023-/" dbs/Other_sources/Inda-Diaz_2023.faa
   
