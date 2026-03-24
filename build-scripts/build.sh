@@ -227,9 +227,9 @@ cat CLEVER.lineages.final.faa | grep ">" | sed "s/^>//" | sed "s/ /\t/g" > CLEVE
 
 ## Helping the user a bit to more easily being able to do manual curation
 echo "ID    Gene_name    Established    Mobile    Verified    Source    ORG-ID    Level    Problem" > CLEVER_annotation.txt
-cat CLEVER.variants.tsv | sed "s/$/\tV/" | sed "s/\(.*\)\t\t\(.*\)$/\1\t\t\2\t\*/" >> CLEVER_annotation.txt
-cat CLEVER.families.tsv | sed "s/$/\tF/" | sed "s/\(.*\)\t\t\(.*\)$/\1\t\t\2\t\*/" >> CLEVER_annotation.txt
-cat CLEVER.lineages.tsv | sed "s/$/\tL/" | sed "s/\(.*\)\t\t\(.*\)$/\1\t\t\2\t\*/" >> CLEVER_annotation.txt
+cat CLEVER.variants.tsv | sed "s/$/\tV/" | sed "s/\(.*\)\t\t\(.*\)$/\1\t\t\2\t\*/" | sed "s/^\(C[0-9]*\)[|]\(\![^|]*\)[|]\(.*\)$/\1|\2|\3\t\*/" >> CLEVER_annotation.txt
+cat CLEVER.families.tsv | sed "s/$/\tF/" | sed "s/\(.*\)\t\t\(.*\)$/\1\t\t\2\t\*/" | sed "s/^\(C[0-9]*\)[|]\(\![^|]*\)[|]\(.*\)$/\1|\2|\3\t\*/" >> CLEVER_annotation.txt
+cat CLEVER.lineages.tsv | sed "s/$/\tL/" | sed "s/\(.*\)\t\t\(.*\)$/\1\t\t\2\t\*/" | sed "s/^\(C[0-9]*\)[|]\(\![^|]*\)[|]\(.*\)$/\1|\2|\3\t\*/" >> CLEVER_annotation.txt
 
 ## Saving sequence IDs to check from logs
 cat *log* | grep " : " | cut -f 1 -d " " > entries_to_check_manually.txt
