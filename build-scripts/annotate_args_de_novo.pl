@@ -152,7 +152,7 @@ foreach $family (@families) {
                 push(@argNames, $argName);
                 push(@accessions, $full_accession);
             }
-            if ($source eq "Wang_2025")) {
+            if ($source eq "Wang_2025") {
                 #DfrA52_XPO54507.1
                 ($geneName, $accession)= split('_', $rest);
                 $class = lc(substr($geneName, 0 ,3));
