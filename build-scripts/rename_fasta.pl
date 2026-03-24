@@ -69,7 +69,7 @@ while ($line = <FASTA>) {
         $blacklisted = 0;
         foreach $item (@blacklist) {
             if ($item ne "") {
-                if ($line =~ m/$item/) {
+                if (($line =~ m/^$item[^A-Za-z]/) [[ ($line =~ m/[^A-Za-z]$item[^A-Za-z]/) || ($line =~ m/[^A-Za-z]$item$/) {
                     $blacklisted = 1;
                 }
             }
@@ -160,7 +160,7 @@ while ($line = <FASTA>) {
                 push(@argNames, $argName);
                 push(@accessions, $full_accession);
             }
-            if ($source eq "Wang_2025") {
+            if ($source eq "Wang_2025")) {
                 #DfrA52_XPO54507.1
                 ($geneName, $accession)= split('_', $rest);
                 $class = lc(substr($geneName, 0 ,3));
