@@ -69,7 +69,7 @@ while ($line = <FASTA>) {
         $blacklisted = 0;
         foreach $item (@blacklist) {
             if ($item ne "") {
-                if (($line =~ m/^$item[^A-Za-z]/) || ($line =~ m/[^A-Za-z]$item[^A-Za-z]/) || ($line =~ m/[^A-Za-z]$item$/) {
+                if (($line =~ m/^$item[^A-Za-z]/) || ($line =~ m/[^A-Za-z]$item[^A-Za-z]/) || ($line =~ m/[^A-Za-z]$item$/)) {
                     $blacklisted = 1;
                 }
             }
