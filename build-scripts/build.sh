@@ -67,7 +67,7 @@ else
   echo "   - Inda-Diaz 2023"
   #prodigal -q -a dbs/Other_sources/Inda-Diaz_2023.faa -i dbs/Other_sources/Inda-Diaz_2023.fasta >> progigal_log.txt
   sed -i "s/\*//g" dbs/Other_sources/Inda-Diaz_2023.faa
-  sed -i "s/^>/>Inda-Diaz_2023-/" dbs/Other_sources/Inda-Diaz_2023.faa
+  sed -i "s/^>/>IndaDiaz_2023-/" dbs/Other_sources/Inda-Diaz_2023.faa
   
   echo "   - Victor 2025"
   sed -i "s/^>/>Victor_2025-/" dbs/Other_sources/Victor_2025.faa
@@ -206,18 +206,22 @@ perl build-scripts/filter_blast.pl CLEVER.families.vs.PLSDB.tblastn 90
 perl build-scripts/filter_blast.pl CLEVER.variants.vs.PLSDB.tblastn 98
 
 ## Make gene annotations
-echo "Annotating ARGs..."
+echo "Annotating ARG variants against CLEVER families..."
 diamond makedb --in dbs/CLEVER/CLEVER.families.faa --db CLEVER.families --ignore-warnings
 diamond blastp -q CLEVER.variants.faa --db CLEVER.families -o CLEVER_vs_families.blastp --id 90 --query-cover 90 --subject-cover 90 --masking none --outfmt 6
+echo "Annotating ARG variants against CLEVER lineages..."
+diamond makedb --in dbs/CLEVER/CLEVER.lineages.faa --db CLEVER.lineages --ignore-warnings
+diamond blastp -q CLEVER.variants.faa --db CLEVER.lineages -o CLEVER_vs_lineages.blastp --id 70 --query-cover 70 --subject-cover 70 --masking none --outfmt 6
+echo "Consolidating annotations at family and lineage levels..."
 perl build-scripts/annotate_args.pl CLEVER_vs_families.blastp blacklist.txt $VERSION
 
 ## Update CLEVER annotation file
 perl build-scripts/create_annotation_file.pl CLEVER_vs_families.blastp.genelist.txt dbs/CLEVER/$CLEVER_ANNOTATION > clever_annotation_manformat.txt
 
 ## Update headers of FASTA files
-perl build-scripts/rename_fasta.pl CLEVER.variants.faa clever_annotation_manformat.txt CLEVER.variants.vs.PLSDB.tblastn.hits.txt blacklist.txt $VERSION > CLEVER.variants.final.faa
-perl build-scripts/rename_fasta.pl CLEVER.families.faa clever_annotation_manformat.txt CLEVER.families.vs.PLSDB.tblastn.hits.txt blacklist.txt $VERSION > CLEVER.families.final.faa
-perl build-scripts/rename_fasta.pl CLEVER.lineages.faa clever_annotation_manformat.txt CLEVER.lineages.vs.PLSDB.tblastn.hits.txt blacklist.txt $VERSION > CLEVER.lineages.final.faa
+perl build-scripts/rename_fasta.pl CLEVER.variants.faa clever_annotation_manformat.txt CLEVER_vs_lineages.blastp CLEVER.variants.vs.PLSDB.tblastn.hits.txt blacklist.txt $VERSION > CLEVER.variants.final.faa
+perl build-scripts/rename_fasta.pl CLEVER.families.faa clever_annotation_manformat.txt CLEVER_vs_lineages.blastp CLEVER.families.vs.PLSDB.tblastn.hits.txt blacklist.txt $VERSION > CLEVER.families.final.faa
+perl build-scripts/rename_fasta.pl CLEVER.lineages.faa clever_annotation_manformat.txt CLEVER_vs_lineages.blastp CLEVER.lineages.vs.PLSDB.tblastn.hits.txt blacklist.txt $VERSION > CLEVER.lineages.final.faa
 
 ## Finalize CLEVER build
 echo "Finalizing CLEVER build..."
