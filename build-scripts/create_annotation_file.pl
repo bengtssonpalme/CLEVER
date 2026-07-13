@@ -1,10 +1,12 @@
 #!/usr/bin/perl
 
 $genelist = shift;
+$mappingfile = shift;
 $oldannotation = shift;
 $manformat = shift;
 
 %annotations = {};
+%mapping = {};
 %foundARGs = {};
 
 open (LOG, ">$genelist.log.txt");
@@ -13,6 +15,14 @@ if ($manformat eq "1") {
     print STDERR "Basing annotation on intermediate format. Mobility and source information might be lost!\n";
     print LOG "Basing annotation on intermediate format. Mobility and source information might be lost!\n";
 }
+
+open (MAPPING, $mappingfile);
+while ($line = <MAPPING>) {
+    chomp($line);
+    ($cleverID, $geneName, $lineage, $class) = split('\t', $line);
+    $mapping{$cleverID} = $line;
+}
+close MAPPING;
 
 open (ANNOT, $oldannotation);
 while ($line = <ANNOT>) {
@@ -58,6 +68,7 @@ while ($line = <GENELIST>) {
     $blacklisted = 0;
     chomp($line);
     ($cleverID, $geneName, $seqs) = split('\t', $line);
+    ($cleverIDx, $geneNamex, $lineage, $class) = split('\t', $mapping{$cleverID});
     if ($geneName =~ m/BLACKLISTED/) {
         $blacklisted = 1;
     }
@@ -102,10 +113,10 @@ while ($line = <GENELIST>) {
         $blacklisted = 1;
     }
     if ($blacklisted == 1) {
-        print "$cleverID\tBLACKLISTED: $geneName\tEXCLUDED\t$class\t$class\t$est\t$ver\t$seqs\n";
+        print "$cleverID\tBLACKLISTED: $geneName\tEXCLUDED\t$class\t$class\t$lineage\t$est\t$ver\t$seqs\n";
         print LOG "$cleverID : BLACKLISTED. Gene name: $geneName\n";
     } else {
-        print "$cleverID\t$geneName\t$geneName\t$class\t$class\t$est\t$ver\t$seqs\n";
+        print "$cleverID\t$geneName\t$geneName\t$class\t$class\t$lineage\t$est\t$ver\t$seqs\n";
     }
 }
 close GENELIST;

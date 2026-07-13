@@ -3,10 +3,15 @@
 $file = shift;
 $blacklistfile = shift;
 $cleverversion = shift;
+$lineagefile = shift;
 
 %clusters = {};
 %foundARGs = {};
+%foundARGLineage = {};
+%lineages = {};
 @blacklist = ();
+%famNo = {};
+%geneNo = {};
 
 open (BLACKLIST, $blacklistfile);
 while ($line = <BLACKLIST>) {
@@ -34,9 +39,40 @@ while ($line = <INPUT>) {
         }
     
     }
+
+    if ($arg =~ m/^C[0-9]/) {
+        ($version, $geneName, $geneID) = split('\|', $arg);
+        ($class, $family) = split("-", $geneID);
+        ($famNumber, $variantNumber) = split("_", $family);
+        if (defined($famNo{$class}) {
+            if ($famNumber > $famNo{$class}) {
+                $famNo{$class} = $famNumber;
+            }
+        }
+        if (defined($geneNo{$family}) {
+            if ($variantNumber > $geneNo{$family}) {
+                $geneNo{$family} = $variantNumber;
+            }
+        }
+    }
     
 }
 close INPUT;
+
+open (LINPUT, $lineagefile);
+while ($line = <LINPUT>) {
+    chomp($line);
+    (@items) = split("\t", $line);
+    $arg = @items[0];
+    if (not(defined($foundARGs{$arg}))) {
+        $foundARGLineage{$arg} = 1;
+        $lineage = @items[1];
+        $id = @items[2];
+        $lineages{$arg} = $lineage;
+    }
+    
+}
+close LINPUT;
 
 open (GENELIST, ">$file.genelist.txt");
 open (MAPPING, ">$file.mapping.txt");
@@ -117,7 +153,7 @@ foreach $family (@families) {
                 push(@argNames, $argName);
                 push(@accessions, $full_accession);
             }
-            if (($source eq "fARGene") || ($source eq "Inda-Diaz_2023")) {
+            if (($source eq "fARGene") || ($source eq "IndaDiaz_2023")) {
                 #fARGene-20k_concatenated-long-orfs_SFKQ01000019.1_seq1@@@methyltransferase_grp2_1
                 ($seqinfo, $class)= split('@@@', $rest);
                 ($junk1,$junk2,$accession,$variant) = split('_', $seqinfo);
@@ -169,7 +205,7 @@ foreach $family (@families) {
                 push(@argNames, $argName);
                 push(@accessions, $full_accession);
             }
-            if ($source eq "Wang_2025") {
+            if ($source eq "Wang_2025")) {
                 #DfrA52_XPO54507.1
                 ($geneName, $accession)= split('_', $rest);
                 $class = lc(substr($geneName, 0 ,3));
@@ -386,8 +422,13 @@ foreach $family (@families) {
         print GENELIST $family . "\t" . $agreedName . "\t";
     }
     foreach $gene (@argsincluster) {
+        if (defined($lineages{$gene})) {
+            $lineage = $lineages{$gene};
+        } else {
+            $lineage = "ERROR! Lineage not fount";
+        }
         print GENELIST $gene . ",";
-        print MAPPING $gene . "\t" . $agreedName ."\n";
+        print MAPPING $gene . "\t" . $agreedName . "\t" . $lineage . "\t" . $class . "\n";
     }
     print GENELIST "\n";
 }

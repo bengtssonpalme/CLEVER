@@ -2,6 +2,7 @@
 
 $fastafile = shift;
 $annotationfile = shift;
+$lineagefile = shift;
 $mobilefile = shift;
 $blacklistfile = shift;
 $cleverversion = shift;
@@ -10,29 +11,54 @@ $cleverversion = shift;
 %argMap = {};
 %classMap = {};
 %familyNum = {};
+%maxFamilyNum = {};
 %varNum = {};
+%maxVarNum = {};
 %familyNumMap = {};
 %varNumMap = {};
 %estMap = {};
 %mobMap = {};
 %verMap = {};
+%lineageMap = {};
 
 open (ANNOT, $annotationfile);
 while ($line = <ANNOT>) {
     chomp($line);
-    ($clusterRep, $autoARG, $curatedARG, $autoclass, $class, $est, $ver, $clusterentries) = split('\t', $line);
+    ($clusterRep, $autoARG, $curatedARG, $autoclass, $class, $lineage, $est, $ver, $clusterentries) = split('\t', $line);
     (@entries) = split(',', $clusterentries);
-    if (defined($familyNum{$class})) {
-        $familyNum{$class} = $familyNum{$class} + 1;
-    } else {
-        $familyNum{$class} = 1;
-    }
-    foreach $entry (@entries) {
-        if (defined($varNum{"$class-$familyNum{$class}"})) {
-            $varNum{"$class-$familyNum{$class}"} = $varNum{"$class-$familyNum{$class}"} + 1;
-        } else {
-            $varNum{"$class-$familyNum{$class}"} = 1;
+    
+    if ($clusterRep =~ m/^C[0-9]/) {
+        ($version, $geneName, $geneID) = split('\|', $clusterRep);
+        ($classB, $family) = split("-", $geneID);
+        ($famNumber, $variantNumber) = split("_", $family);
+        $familyNum{$class} = $famNumber;
+        if (defined($maxFamilyNum{$classB})) {
+            if ($famNumber > $maxFamilyNum{$classB}) {
+                $maxFamilyNum{$classB} = $famNumber;
+            }
         }
+        if (defined($maxVarNum{$family})) {
+            if ($variantNumber > $maxVarNum{$family}) {
+                $maxVarNum{$family} = $variantNumber;
+            }
+        }
+    }
+    
+    foreach $entry (@entries) {
+        if ($entry =~ m/^C[0-9]/) {
+            ($version, $geneName, $geneID) = split('\|', $entry);
+            ($classB, $family) = split("-", $geneID);
+            ($famNumber, $variantNumber) = split("_", $family);
+            $varNum{$family} = $variantNumber;
+            
+            if (defined($maxVarNum{$family})) {
+                if ($variantNumber > $maxVarNum{$family}) {
+                    $maxVarNum{$family} = $variantNumber;
+                }
+            }
+        } 
+        ## OLD CODE
+
         $repMap{$entry} = $clusterRep;
         $argMap{$entry} = $curatedARG;
         $classMap{$entry} = $class;
@@ -61,6 +87,17 @@ while ($line = <BLACKLIST>) {
 }
 close BLACKLIST;
 
+open (LINEAGE, $lineagefile);
+while ($line = <LINEAGE>) {
+    chomp($line);
+    ($gene, $lineage) = split('\t', $line);
+    ($version, $genename, $cleverID) = split('\|', $lineage);
+    $class = $cleverID;
+    $class =~ s/-.*//;
+    $lineageMap{$gene} = $class;
+}
+close LINEAGE;
+
 $outputEntry = 0;
 open (FASTA, $fastafile);
 while ($line = <FASTA>) {
@@ -88,6 +125,8 @@ while ($line = <FASTA>) {
             ($version, $argName, $cleverID, $attr, $source, $accession) = split('\|',$arg);
             push(@argNames, $argName);
             push(@accessions, $accession);
+            ($gclass_fam, $variantNo) = split("_", $cleverID);
+            $varNumMap{$arg} = $variantNo;
         } else {
             $cleverID = "";
             if ($source eq "ResFinder") {
@@ -108,7 +147,7 @@ while ($line = <FASTA>) {
                 $argName = "~" . $class;
                 $full_accession = $accession;
             }
-            if (($source eq "fARGene") || ($source eq "Inda-Diaz_2023")) {
+            if (($source eq "fARGene") || ($source eq "Inda-Diaz_2023") || ($source eq "IndaDiaz_2023")) {
                 #fARGene-20k_concatenated-long-orfs_SFKQ01000019.1_seq1@@@methyltransferase_grp2_1
                 ($seqinfo, $class)= split('@@@', $rest);
                 ($junk1,$junk2,$accession,$variant) = split('_', $seqinfo);
@@ -208,6 +247,11 @@ while ($line = <FASTA>) {
                 $class = substr($class, 1);
             }
         }
+        if ($class eq "") {
+            if (defined($lineageMap{$arg})) {
+                $class = $lineageMap{$arg};
+            }
+        }
         if ($established eq "") {
             $established = substr($attr, 0, 1);
         }
@@ -219,11 +263,28 @@ while ($line = <FASTA>) {
         }
 
         if ($class eq "") {
-            $class = "unc";
+            $class = "new";
         }
+
 
         $familyNumber = $familyNumMap{"$arg"};
         $variantNumber = $varNumMap{"$arg"};
+
+        $addFam = 0;
+        if ($familyNumber eq "") {
+            $familyNumber = $maxFamilyNum{$class} + 1;
+            $maxFamilyNum{$class} = $maxFamilyNum{$class} + 1;
+            $maxVarNum{"$class-$familyNumber"} = 0;
+            $varNum{"$class-$familyNumber"} = 0;
+            $addFam = 1;
+        }
+        if ($variantNumber eq "") {
+            $variantNumber = $maxVarNum{"$class-$familyNumber"} + 1;
+            $maxVarNum{"$class-$familyNumber"} = $maxVarNum{"$class-$familyNumber"} + 1;
+            $varNum{"$class-$familyNumber"} = $maxVarNum{"$class-$familyNumber"};
+            $varNumMap{$arg} = $maxVarNum{"$class-$familyNumber"};
+            print STDERR "$arg\t$class-$familyNumber\t$varNumMap{$arg}\t$variantNumber\n";
+        }
 
         if (substr($newname, 0, 7) eq "CLEVER:") {
             $newname = substr($newname, 7);
@@ -236,6 +297,16 @@ while ($line = <FASTA>) {
             } else {
                 $newaccession = "C" . $cleverversion . "|" . $newname . "|" . $class . "-" . $familyNumber . "_" . $variantNumber . "|" . $established . $mobile . $verified . "|" . $source . "|" . $full_accession;
             }
+        }
+
+        if ($addFam == 1) {
+            ## WORK HERE -- WHY ARE ALL VARIANTS _1 ?????? SOMEWHERE THIS SHOULD BE INCREASED AND SAVED
+            print STDERR "$arg\t$newaccession\t$class-$familyNumber\_$variantNumber\t$class\t$familyNumber\t" . $varNum{"$class-$familyNumber"} . "\n";
+            $repMap{$arg} = $newaccession;
+            $argMap{$arg} = $class . "-" . $familyNumber . "_" . $variantNumber;
+            $classMap{$arg} = $class;
+            $familyNumMap{"$arg"} = $familyNumber;
+            $varNumMap{"$arg"} = $varNum{"$class-$familyNumber"};
         }
         
         if ($newname eq "EXCLUDE") {
