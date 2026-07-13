@@ -22,6 +22,10 @@ else
   conda install -y bioconda::blast
   mkdir dbs
 
+  ## Prepare CLEVER files
+  echo "Preparing CLEVER..."
+  sed -i "s/Inda-Diaz_2023/IndaDiaz_2023/g" dbs/CLEVER/CLEVER*
+
   ## Prepare ResFinder files
   echo "Preparing ResFinder..."
   mkdir dbs/ResFinder
