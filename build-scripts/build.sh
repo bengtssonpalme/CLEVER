@@ -213,10 +213,10 @@ echo "Annotating ARG variants against CLEVER lineages..."
 diamond makedb --in dbs/CLEVER/CLEVER.lineages.faa --db CLEVER.lineages --ignore-warnings
 diamond blastp -q CLEVER.variants.faa --db CLEVER.lineages -o CLEVER_vs_lineages.blastp --id 70 --query-cover 70 --subject-cover 70 --masking none --outfmt 6
 echo "Consolidating annotations at family and lineage levels..."
-perl build-scripts/annotate_args.pl CLEVER_vs_families.blastp blacklist.txt $VERSION
+perl build-scripts/annotate_args.pl CLEVER_vs_families.blastp blacklist.txt $VERSION CLEVER_vs_lineages.blastp
 
 ## Update CLEVER annotation file
-perl build-scripts/create_annotation_file.pl CLEVER_vs_families.blastp.genelist.txt dbs/CLEVER/$CLEVER_ANNOTATION > clever_annotation_manformat.txt
+perl build-scripts/create_annotation_file.pl CLEVER_vs_families.blastp.genelist.txt CLEVER_vs_families.blastp.mapping.txt dbs/CLEVER/$CLEVER_ANNOTATION  > clever_annotation_manformat.txt
 
 ## Update headers of FASTA files
 perl build-scripts/rename_fasta.pl CLEVER.variants.faa clever_annotation_manformat.txt CLEVER_vs_lineages.blastp CLEVER.variants.vs.PLSDB.tblastn.hits.txt blacklist.txt $VERSION > CLEVER.variants.final.faa
