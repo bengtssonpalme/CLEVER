@@ -4,6 +4,7 @@ $file = shift;
 $blacklistfile = shift;
 $cleverversion = shift;
 $lineagefile = shift;
+$autoRespond = shift;
 
 %clusters = {};
 %foundARGs = {};
@@ -44,12 +45,12 @@ while ($line = <INPUT>) {
         ($version, $geneName, $geneID) = split('\|', $arg);
         ($class, $family) = split("-", $geneID);
         ($famNumber, $variantNumber) = split("_", $family);
-        if (defined($famNo{$class}) {
+        if (defined($famNo{$class})) {
             if ($famNumber > $famNo{$class}) {
                 $famNo{$class} = $famNumber;
             }
         }
-        if (defined($geneNo{$family}) {
+        if (defined($geneNo{$family})) {
             if ($variantNumber > $geneNo{$family}) {
                 $geneNo{$family} = $variantNumber;
             }
@@ -64,7 +65,7 @@ while ($line = <LINPUT>) {
     chomp($line);
     (@items) = split("\t", $line);
     $arg = @items[0];
-    if (not(defined($foundARGs{$arg}))) {
+    if (not(defined($foundARGsLineage{$arg}))) {
         $foundARGLineage{$arg} = 1;
         $lineage = @items[1];
         $id = @items[2];
@@ -76,6 +77,7 @@ close LINPUT;
 
 open (GENELIST, ">$file.genelist.txt");
 open (MAPPING, ">$file.mapping.txt");
+print MAPPING "Variant-ID\tGene-name\tFamily-ID\tLineage-ID\tClass\tBlacklisted\n";
 open (LOG, ">$file.logfile.txt");
 @families = sort(keys(%clusters));
 
@@ -205,7 +207,7 @@ foreach $family (@families) {
                 push(@argNames, $argName);
                 push(@accessions, $full_accession);
             }
-            if ($source eq "Wang_2025")) {
+            if ($source eq "Wang_2025") {
                 #DfrA52_XPO54507.1
                 ($geneName, $accession)= split('_', $rest);
                 $class = lc(substr($geneName, 0 ,3));
@@ -351,7 +353,7 @@ foreach $family (@families) {
     foreach $gene (@argsincluster) {
         foreach $item (@blacklist) {
             if ($item ne "") {
-                if ($gene =~ m/$item/) {
+                if (($gene =~ m/^$item[^A-Za-z]/) || ($gene =~ m/[^A-Za-z]$item[^A-Za-z]/) || ($gene =~ m/[^A-Za-z]$item$/)) {
                     $blacklisted = 1;
                 }
             }
@@ -363,22 +365,30 @@ foreach $family (@families) {
             print LOG "$family : Family $family has inconistent gene name.\n";
             print STDERR "--------------\n";
             print STDERR "Inconsistent naming of family:\t". $family . "\n";
-            print STDERR "Suggested name:             Original name:\n";
-            print STDERR "==> " . $agreedName . "   " . $mainName . "\n";
-            print STDERR "These are the genes in the cluster:\n";
-            print STDERR $family . "\t";
-            foreach $gene (@argsincluster) {
-                print STDERR $gene . "\t";
+            if ($autoRespond eq "") {
+                print STDERR "Suggested name:             Original name:\n";
+                print STDERR "==> " . $agreedName . "   " . $mainName . "\n";
+                print STDERR "These are the genes in the cluster:\n";
+                print STDERR $family . "\t";
+                foreach $gene (@argsincluster) {
+                    print STDERR $gene . "\t";
+                }
+                print STDERR "\n";
+                print STDERR "--------------\n";
+                print STDERR "Please enter a solution to solve this issue. Enter:\n";
+                print STDERR "   (1) new gene name\n";
+                print STDERR "   (2) empty to accept suggested name above - $agreedName\n";
+                print STDERR "   (3) 'O' or 'R' or 'ORIGINAL' or 'REVERT' to keep original name - $mainName\n";
+                print STDERR "   (4) 'E' or 'X' or 'B' or 'EXCLUDE' or 'BLACKLIST' to exclude entry\n";
+                $solution = <>;
+                chomp($solution);
+            } else {
+                if ($autoRespond eq "accept") {
+                    $solution = "";
+                } else {
+                    $solution = $autoRespond;
+                }
             }
-            print STDERR "\n";
-            print STDERR "--------------\n";
-            print STDERR "Please enter a solution to solve this issue. Enter:\n";
-            print STDERR "   (1) new gene name\n";
-            print STDERR "   (2) empty to accept suggested name above - $agreedName\n";
-            print STDERR "   (3) 'O' or 'R' or 'ORIGINAL' or 'REVERT' to keep original name - $mainName\n";
-            print STDERR "   (4) 'E' or 'X' or 'B' or 'EXCLUDE' or 'BLACKLIST' to exclude entry\n";
-            $solution = <>;
-            chomp($solution);
             if (length($solution) < 2) {
                 $agreedName = $agreedName;
             } else {
@@ -425,10 +435,14 @@ foreach $family (@families) {
         if (defined($lineages{$gene})) {
             $lineage = $lineages{$gene};
         } else {
-            $lineage = "ERROR! Lineage not fount";
+            $lineage = "ERROR! Lineage not found";
         }
         print GENELIST $gene . ",";
-        print MAPPING $gene . "\t" . $agreedName . "\t" . $lineage . "\t" . $class . "\n";
+        if ($blacklisted == 1) {
+            print MAPPING $gene . "\t" . $agreedName . "\t" . $family . "\t" . $lineage . "\t" . $class . "\t" . "BLACKLISTED" . "\n";
+        } else {
+            print MAPPING $gene . "\t" . $agreedName . "\t" . $family . "\t" . $lineage . "\t" . $class . "\t" . "" . "\n";
+        }
     }
     print GENELIST "\n";
 }

@@ -19,7 +19,7 @@ if ($manformat eq "1") {
 open (MAPPING, $mappingfile);
 while ($line = <MAPPING>) {
     chomp($line);
-    ($cleverID, $geneName, $lineage, $class) = split('\t', $line);
+    ($cleverID, $geneName, $family, $lineage, $class) = split('\t', $line);
     $mapping{$cleverID} = $line;
 }
 close MAPPING;
@@ -62,13 +62,13 @@ while ($line = <ANNOT>) {
 }
 close ANNOT;
 
-print "Original cluster name\tAutomated gene name\tCorrected gene name\tSuggested Class\tClass\tEstablished\tVerified\tSequences\n";
+print "Original cluster name\tAutomated gene name\tCorrected gene name\tSuggested Class\tLineage\tClass\tEstablished\tVerified\tSequences\n";
 open (GENELIST, $genelist);
 while ($line = <GENELIST>) {
     $blacklisted = 0;
     chomp($line);
     ($cleverID, $geneName, $seqs) = split('\t', $line);
-    ($cleverIDx, $geneNamex, $lineage, $class) = split('\t', $mapping{$cleverID});
+    ($cleverIDx, $geneNamex, $familyx, $lineage, $class) = split('\t', $mapping{$cleverID});
     if ($geneName =~ m/BLACKLISTED/) {
         $blacklisted = 1;
     }
