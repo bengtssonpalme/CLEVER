@@ -250,7 +250,7 @@ mv CLEVER.variants.final.faa CLEVER-build/CLEVER.variants.faa
 mv CLEVER.families.final.faa CLEVER-build/CLEVER.families.faa
 mv CLEVER.lineages.final.faa CLEVER-build/CLEVER.lineages.faa
 mv CLEVER.*.tsv CLEVER-build/
-mv CLEVER_vs_families.blastp.mapping.txt CLEVER-build/CLEVER.variant-family-mapping.txt
+mv CLEVER_vs_families.filtered.blastp.mapping.txt CLEVER-build/CLEVER.variant-family-mapping.txt
 
 tar -czvf CLEVER.tgz CLEVER-build/
 
