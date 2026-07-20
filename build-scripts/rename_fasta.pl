@@ -2,7 +2,7 @@
 
 $fastafile = shift;
 $annotationfile = shift;
-$lineagefile = shift;
+$mappingfile = shift;
 $mobilefile = shift;
 $blacklistfile = shift;
 $cleverversion = shift;
@@ -87,16 +87,28 @@ while ($line = <BLACKLIST>) {
 }
 close BLACKLIST;
 
-open (LINEAGE, $lineagefile);
-while ($line = <LINEAGE>) {
+#open (LINEAGE, $lineagefile);
+#while ($line = <LINEAGE>) {
+#    chomp($line);
+#    ($gene, $lineage) = split('\t', $line);
+#    ($version, $genename, $cleverID) = split('\|', $lineage);
+#    $class = $cleverID;
+#    $class =~ s/-.*//;
+#    $lineageMap{$gene} = $class;
+#}
+#close LINEAGE;
+
+open (MAPPING, $mappingfile);
+while ($line = <MAPPING>) {
     chomp($line);
-    ($gene, $lineage) = split('\t', $line);
-    ($version, $genename, $cleverID) = split('\|', $lineage);
-    $class = $cleverID;
-    $class =~ s/-.*//;
-    $lineageMap{$gene} = $class;
+    ($variantID, $genename, $familyID, $lineageID, $class, $blacklisted) = split('\t', $line);
+    ($linversion, $lingenename, $lincleverID) = split('\|', $lineageID);
+    ($famversion, $famgenename, $famcleverID) = split('\|', $familyID);
+    $classMap{$gene} = $class;
+    $lineageMap{$gene} = $lineageID;
+    $familyMap{$gene} = $familyID;
 }
-close LINEAGE;
+close MAPPING;
 
 $outputEntry = 0;
 open (FASTA, $fastafile);
@@ -120,13 +132,13 @@ while ($line = <FASTA>) {
         ($source, $rest) = split("-",$arg);
         $rest = $arg;
         $rest =~ s/^[^-]*-//;
+        $verified = "";
         if (substr($arg, 0, 2) =~ m/C[0-9]/) {
             ## This is an existing CLEVER gene
             ($version, $argName, $cleverID, $attr, $source, $accession) = split('\|',$arg);
-            push(@argNames, $argName);
-            push(@accessions, $accession);
             ($gclass_fam, $variantNo) = split("_", $cleverID);
             $varNumMap{$arg} = $variantNo;
+            $verified = substr($attr, 2, 1);
         } else {
             $cleverID = "";
             if ($source eq "ResFinder") {
@@ -134,18 +146,21 @@ while ($line = <FASTA>) {
                 ($name,$variant,$accession,$version) = split('_', $rest);
                 $argName = $name;
                 $full_accession = $accession . "." . $version;
+                $verified = "V";
             }
             if ($source eq "CARD") {
                 #CARD-gb|ADQ43424.1|ARO:3002746|QnrB31
                 ($gb,$accession,$aro,$name) = split('\|', $rest);
                 $argName = $name;
                 $full_accession = $accession;
+                $verified = "V";
             }
             if ($source eq "ResFinderFG") {
                 #ResFinderFG-beta_lactamase|KU545081.1|feces|ATM
                 ($class,$accession,$aro,$origin,$antibiotic) = split('\|', $rest);
                 $argName = "~" . $class;
                 $full_accession = $accession;
+                $verified = "V";
             }
             if (($source eq "fARGene") || ($source eq "Inda-Diaz_2023") || ($source eq "IndaDiaz_2023")) {
                 #fARGene-20k_concatenated-long-orfs_SFKQ01000019.1_seq1@@@methyltransferase_grp2_1
@@ -153,8 +168,7 @@ while ($line = <FASTA>) {
                 ($junk1,$junk2,$accession,$variant) = split('_', $seqinfo);
                 $argName = "!" . $class;
                 $full_accession = $accession;
-                push(@argNames, $argName);
-                push(@accessions, $full_accession);
+                $verified = "P";
             }
             if ($source eq "Victor_2025") {
                 #HiAAMG_A_sequ1ence
@@ -163,8 +177,7 @@ while ($line = <FASTA>) {
                 $accession = $rest;
                 $argName = "!" . $class;
                 $full_accession = $accession;
-                push(@argNames, $argName);
-                push(@accessions, $full_accession);
+                $verified = "P";
             }
             if ($source eq "Victor_2025b") {
                 #Class_ANSF1A
@@ -172,32 +185,28 @@ while ($line = <FASTA>) {
                 $accession = $rest;
                 $argName = "!" . $class;
                 $full_accession = $accession;
-                push(@argNames, $argName);
-                push(@accessions, $full_accession);
+                $verified = "P";
             }
             if ($source eq "Li_2025") {
                 #class_a|cattle|k141_371442_seq1_1
                 ($class, $animal, $accession) = split('\|', $rest);
                 $argName = "!" . $class;
                 $full_accession = $accession;
-                push(@argNames, $argName);
-                push(@accessions, $full_accession);
+                $verified = "P";
             }
             if ($source eq "Sommerville_2026") {
                 #>retrieved-translated_gene_catalog_Gene026555_seq1_1|class_A
                 ($accession,$class) = split('\|', $rest);
                 $argName = "!" . $class;
                 $full_accession = $accession;
-                push(@argNames, $argName);
-                push(@accessions, $full_accession);
+                $verified = "P";
             }
             if (($source eq "Mustard") || ($source eq "Ruppe_2019")) {
                 #1|311066|3|Human-Microbiome-3.9M-Gene-Catalog-(metahit-v2)|MC3.MG12.AS1.GP1.C65190.G5|aac2
                 ($x, $y, $z, $refcatalog, $accession, $class)= split('\|', $rest);
                 $argName = "!" . $class;
                 $full_accession = $accession;
-                push(@argNames, $argName);
-                push(@accessions, $full_accession);
+                $verified = "S";
             }
             if ($source eq "Wang_2025") {
                 #DfrA52_XPO54507.1
@@ -205,12 +214,13 @@ while ($line = <FASTA>) {
                 $class = lc(substr($geneName, 0 ,3));
                 $argName = "!" . $geneName;
                 $full_accession = $accession;
-                push(@argNames, $argName);
-                push(@accessions, $full_accession);
+                $verified = "S";
             }
         }
         $rep = $repMap{"$arg"};
         $newname = $argMap{"$arg"};
+        $family = $familyMap{"$arg"};
+        $lineage = $lineageMap{"$arg"};
         $class = $classMap{"$arg"};
         $established = $estMap{"$arg"};
         if (defined($mobMap{"$arg"})) {
@@ -218,7 +228,13 @@ while ($line = <FASTA>) {
         } else {
             $mobile = "C";
         }
-        $verified = $verMap{"$arg"};
+        if (defined($verMap{"$arg"})) {
+            $verified = $verMap{"$arg"};
+        } else {
+            if ($verified eq "") {
+                $verified = "P";
+            }
+        }
 
         if ($rep eq "") {
             ## Rep seems to be unused in output, skip this
@@ -237,7 +253,6 @@ while ($line = <FASTA>) {
             }
         }
 
-
         if ($newname eq "") {
             $newname = $argName;
         }
@@ -248,18 +263,30 @@ while ($line = <FASTA>) {
             }
         }
         if ($class eq "") {
-            if (defined($lineageMap{$arg})) {
-                $class = $lineageMap{$arg};
+            if (defined($lineageMap{"$arg"})) {
+                $lineageID = $lineageMap{"$arg"};
+                ($linversion, $lingenename, $linclass) = split('\|', $lineageID);
+                ($class, $no) = split('-'. $linclass);
             }
         }
         if ($established eq "") {
-            $established = substr($attr, 0, 1);
+            if ($attr ne "") {
+                $established = substr($attr, 0, 1);
+            } else {
+                $established = "L";
+            }
         }
         if (substr($attr, 1, 1) eq "M") {
             $mobile = "M";
+        } else {
+            $mobiled = "C";
         }
         if ($verified eq "") {
-            $verified = substr($attr, 2, 1);
+            if ($attr ne "") {
+                $verified = substr($attr, 2, 1);
+            } else {
+                $verified = "P";
+            }
         }
 
         if ($class eq "") {
@@ -277,13 +304,14 @@ while ($line = <FASTA>) {
             $maxVarNum{"$class-$familyNumber"} = 0;
             $varNum{"$class-$familyNumber"} = 0;
             $addFam = 1;
+            #print STDERR "New family: $class-$familyNumber Rep: $rep\n";
         }
         if ($variantNumber eq "") {
             $variantNumber = $maxVarNum{"$class-$familyNumber"} + 1;
             $maxVarNum{"$class-$familyNumber"} = $maxVarNum{"$class-$familyNumber"} + 1;
             $varNum{"$class-$familyNumber"} = $maxVarNum{"$class-$familyNumber"};
             $varNumMap{$arg} = $maxVarNum{"$class-$familyNumber"};
-            print STDERR "$arg\t$class-$familyNumber\t$varNumMap{$arg}\t$variantNumber\n";
+            #print STDERR "$arg\t$class-$familyNumber\t$varNumMap{$arg}\t$variantNumber\n";
         }
 
         if (substr($newname, 0, 7) eq "CLEVER:") {
@@ -301,7 +329,7 @@ while ($line = <FASTA>) {
 
         if ($addFam == 1) {
             ## WORK HERE -- WHY ARE ALL VARIANTS _1 ?????? SOMEWHERE THIS SHOULD BE INCREASED AND SAVED
-            print STDERR "$arg\t$newaccession\t$class-$familyNumber\_$variantNumber\t$class\t$familyNumber\t" . $varNum{"$class-$familyNumber"} . "\n";
+            #print STDERR "$arg\t$newaccession\t$class-$familyNumber\_$variantNumber\t$class\t$familyNumber\t" . $varNum{"$class-$familyNumber"} . "\n";
             $repMap{$arg} = $newaccession;
             $argMap{$arg} = $class . "-" . $familyNumber . "_" . $variantNumber;
             $classMap{$arg} = $class;
