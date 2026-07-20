@@ -13,8 +13,10 @@ if [[ $1 == "ONLYBUILD" ]]; then
 else
   ## Setup Conda environment
   echo "Creating conda environment..."
+  source "$(conda info --base)/etc/profile.d/conda.sh"
   conda create --solver libmamba -y -n CLEVER
   conda init
+  source "$(conda info --base)/etc/profile.d/conda.sh"
   conda activate CLEVER
   conda install -y anaconda::wget
   conda install -y bioconda::prodigal
@@ -38,7 +40,7 @@ else
   mv phenotypes.txt dbs/ResFinder/
   prodigal -q -a dbs/ResFinder/all.faa -i dbs/ResFinder/all.fsa >> progigal_log.txt
   sed -i "s/\*//g" dbs/ResFinder/all.faa
-  sed -i "/^>ResFinder-/!" "s/^>/>ResFinder-/" dbs/ResFinder/all.faa
+  sed -i "/^>ResFinder-/! s/^>/>ResFinder-/" dbs/ResFinder/all.faa
 
   ## Prepare CARD files
   echo "Preparing CARD..."
@@ -57,14 +59,14 @@ else
   mv CARD-Download-README.txt dbs/CARD/
   mv PMID.tsv dbs/CARD/
   cat dbs/CARD/protein_fasta_protein_knockout_model.fasta dbs/CARD/protein_fasta_protein_overexpression_model.fasta dbs/CARD/protein_fasta_protein_variant_model.fasta > dbs/CARD/not_ARGs.fasta
-  sed -i "/^>CARD-/!" "s/^>/>CARD-/" dbs/CARD/protein_fasta_protein_homolog_model.fasta
+  sed -i "/^>CARD-/! s/^>/>CARD-/" dbs/CARD/protein_fasta_protein_homolog_model.fasta
 
   ## Prepare ResFinderFG files
   echo "Preparing ResFinderFG..."
   mkdir dbs/ResFinderFG
   wget $RESFINDERFG
   mv ResFinder_FG_AA.faa dbs/ResFinderFG/
-  sed -i "/^>ResFinderFG-/!" "s/^>/>ResFinderFG-/" dbs/ResFinderFG/ResFinder_FG_AA.faa
+  sed -i "/^>ResFinderFG-/! s/^>/>ResFinderFG-/" dbs/ResFinderFG/ResFinder_FG_AA.faa
 
   echo "Preparing other sources..."
   
@@ -72,25 +74,25 @@ else
   echo "   - Inda-Diaz 2023"
   #prodigal -q -a dbs/Other_sources/IndaDiaz_2023.faa -i dbs/Other_sources/IndaDiaz_2023.fasta >> progigal_log.txt
   sed -i "s/\*//g" dbs/Other_sources/IndaDiaz_2023.faa
-  sed -i "/^>IndaDiaz_2023-/!" "s/^>/>IndaDiaz_2023-/" dbs/Other_sources/IndaDiaz_2023.faa
+  sed -i "/^>IndaDiaz_2023-/! s/^>/>IndaDiaz_2023-/" dbs/Other_sources/IndaDiaz_2023.faa
   
   echo "   - Victor 2025"
-  sed -i "/^>Victor_2025-/!" "s/^>/>Victor_2025-/" dbs/Other_sources/Victor_2025.faa
-  sed -i "/^>Victor_2025b-/!" "s/^>/>Victor_2025b-/" dbs/Other_sources/Victor_2025b.faa
+  sed -i "/^>Victor_2025-/! s/^>/>Victor_2025-/" dbs/Other_sources/Victor_2025.faa
+  sed -i "/^>Victor_2025b-/! s/^>/>Victor_2025b-/" dbs/Other_sources/Victor_2025b.faa
 
   echo "   - Li 2025"
-  sed -i "/^>Li_2025-/!" "s/^>/>Li_2025-/" dbs/Other_sources/Li_2025.faa
+  sed -i "/^>Li_2025-/! s/^>/>Li_2025-/" dbs/Other_sources/Li_2025.faa
 
   echo "   - Sommerville 2026"
-  sed -i "/^>Sommerville_2026-/!" "s/^>/>Sommerville_2026-/" dbs/Other_sources/Sommerville_2026.faa
+  sed -i "/^>Sommerville_2026-/! s/^>/>Sommerville_2026-/" dbs/Other_sources/Sommerville_2026.faa
 
   ## Prepare Mustard predictions
   #https://mgps.eu/Mustard/db/all_ard.zip
   echo "   - Ruppe 2019"
-  sed -i "/^>Ruppe_2019-/!" "s/^>/>Ruppe_2019-/" dbs/Other_sources/Ruppe_2019.faa
+  sed -i "/^>Ruppe_2019-/! s/^>/>Ruppe_2019-/" dbs/Other_sources/Ruppe_2019.faa
 
   echo "   - Wang 2025"
-  sed -i "/^>Wang_2025-/!" "s/^>/>Wang_2025-/" dbs/Other_sources/Wang_2025.faa
+  sed -i "/^>Wang_2025-/! s/^>/>Wang_2025-/" dbs/Other_sources/Wang_2025.faa
   
 
   ## Merge all  sources into one file
