@@ -14,6 +14,7 @@ else
   ## Setup Conda environment
   echo "Creating conda environment..."
   conda create --solver libmamba -y -n CLEVER
+  conda init
   conda activate CLEVER
   conda install -y anaconda::wget
   conda install -y bioconda::prodigal
