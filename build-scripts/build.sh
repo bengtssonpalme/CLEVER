@@ -231,8 +231,8 @@ perl build-scripts/create_annotation_file.pl CLEVER_vs_families.filtered.blastp.
 
 ## Update headers of FASTA files
 perl build-scripts/rename_fasta.pl CLEVER.variants.faa clever_annotation_manformat.txt CLEVER_vs_families.filtered.blastp.mapping.txt CLEVER.variants.vs.PLSDB.tblastn.hits.txt blacklist.txt dbs/Other_sources/mapping_to_classes.txt $VERSION > CLEVER.variants.final.faa
-perl build-scripts/rename_fasta.pl CLEVER.families.faa clever_annotation_manformat.txt CLEVER_vs_families.filtered.blastp.mapping.txt CLEVER.families.vs.PLSDB.tblastn.hits.txt blacklist.txt dbs/Other_sources/mapping_to_classes.txt $VERSION > CLEVER.families.final.faa
-perl build-scripts/rename_fasta.pl CLEVER.lineages.faa clever_annotation_manformat.txt CLEVER_vs_families.filtered.blastp.mapping.txt CLEVER.lineages.vs.PLSDB.tblastn.hits.txt blacklist.txt dbs/Other_sources/mapping_to_classes.txt $VERSION > CLEVER.lineages.final.faa
+perl build-scripts/rename_fasta.pl CLEVER.families.faa clever_annotation_manformat.txt CLEVER_vs_families.filtered.blastp.mapping.txt CLEVER.families.vs.PLSDB.tblastn.hits.txt blacklist.txt dbs/Other_sources/mapping_to_classes.txt $VERSION CLEVER.variants.faa.variantmap.txt > CLEVER.families.final.faa
+perl build-scripts/rename_fasta.pl CLEVER.lineages.faa clever_annotation_manformat.txt CLEVER_vs_families.filtered.blastp.mapping.txt CLEVER.lineages.vs.PLSDB.tblastn.hits.txt blacklist.txt dbs/Other_sources/mapping_to_classes.txt $VERSION CLEVER.variants.faa.variantmap.txt > CLEVER.lineages.final.faa
 
 ## Finalize CLEVER build
 echo "Finalizing CLEVER build..."
