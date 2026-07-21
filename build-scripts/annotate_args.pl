@@ -100,9 +100,11 @@ foreach $family (@families) {
         unshift(@args, $family);
     }
     foreach $arg (@args) {
+        $class = "";
         if (substr($arg, 0, 2) =~ m/C[0-9]/) {
             ## This is an existing CLEVER gene
             ($version, $argName, $cleverID, $attr, $source, $accession) = split('\|',$arg);
+            ($class) = split("-",$cleverID);
             push(@argNames, $argName);
             push(@accessions, $accession);
         } else {
@@ -227,7 +229,6 @@ foreach $family (@families) {
 ## C1_blaC1-1|LCP|~C1_blaC1-1|Inda-Diaz|AAAAQY010000096.1
 
     %disagreement = {};
-
     if (scalar(@argNames) < 3) {
         $agreedName = @argNames[0];
         if ((@argNames[0] eq "") || (substr(@argNames[0],0,1) eq "!")) {
@@ -237,12 +238,14 @@ foreach $family (@families) {
                 print LOG "$family : Family $family lacked a gene name for the reference sequence. Settled on $agreedName for gene. You might want to check this entry manually.\n";
             } else {
                 $agreedName = "!";
+                $mainName = "!";
                 if ($family !~ m/HASH/) {
                     print STDERR "Family $family lacked any valid gene names for any sequence. You might want to check this entry manually.\n";
                     print LOG "$family : Family $family lacked any valid gene names for any sequence. You might want to check this entry manually.\n";
                 }
             }
         }
+ 
     } else {
         undef(@agreedArray);
         $problem = 0;
@@ -304,6 +307,7 @@ foreach $family (@families) {
         } else {
             $agreedName = "!";
         }
+
     }
     if (($agreedName =~ m/\([^)]*$/)) {
         $agreedName = $agreedName . ")";
@@ -322,6 +326,7 @@ foreach $family (@families) {
     if (substr($agreedName, -1) =~ m/[-_.]/) {
         $agreedName = substr($agreedName, 0, -1);
     }
+
     $change = 0;
     if ($agreedName eq "!") {
         if (substr($mainName, 0 , 1) ne "!") {
@@ -329,7 +334,6 @@ foreach $family (@families) {
         } else {
             $agreedName = "";
         }
-
         foreach $name (reverse sort {$disagreement{$a} <=> $disagreement{$b}} keys %disagreement) {
             if ($name !~ m/HASH/) {
                 if (substr($name, 0, 1) ne "!") {
@@ -348,6 +352,7 @@ foreach $family (@families) {
     if ($change == 1) {
         $agreedName = $mainName;
     }
+
     (@argsincluster) = split('\n',$clusters{$family});
     $blacklisted = 0;
     foreach $gene (@argsincluster) {
