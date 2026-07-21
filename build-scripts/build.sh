@@ -110,18 +110,18 @@ fi
 ## Match and cluster VARIANT database (100% identity)
 echo "Creating variant database..."
 diamond makedb --in dbs/CLEVER/CLEVER.variants.faa --db CLEVER --ignore-warnings
-diamond blastp -q dbs/ResFinder/all.faa --db CLEVER -o ResFinder_vs_CLEVER.blastp --id 100 --query-cover 99 --subject-cover 99 --masking none --outfmt 6 --un ResFinder_unique.faa
+diamond blastp -q dbs/ResFinder/all.faa --db CLEVER -o ResFinder_vs_CLEVER.blastp --id 100 --query-cover 99 --subject-cover 99 --masking none --max-target-seqs 0 --evalue 1 --sensitive --outfmt 6 --un ResFinder_unique.faa
 cat dbs/CLEVER/CLEVER.variants.faa ResFinder_unique.faa > ResFinder.faa
 diamond makedb --in ResFinder.faa --db ResFinder --ignore-warnings
 diamond blastp -q dbs/CARD/protein_fasta_protein_homolog_model.fasta --db ResFinder -o CARD_vs_ResFinder.blastp --id 100 --query-cover 99 --subject-cover 99 --masking none --outfmt 6 --un CARD_unique.faa
 diamond makedb --in dbs/CARD/not_ARGs.fasta --db CARD_NOT_ARGs --ignore-warnings
-diamond blastp -q CARD_unique.faa --db CARD_NOT_ARGs -o CARD_vs_CARD_NON_ARGs.blastp --id 70 --query-cover 80 --subject-cover 80 --masking none --outfmt 6 --un CARD_filtered.faa
+diamond blastp -q CARD_unique.faa --db CARD_NOT_ARGs -o CARD_vs_CARD_NON_ARGs.blastp --id 70 --query-cover 80 --subject-cover 80 --masking none --max-target-seqs 0 --evalue 1 --sensitive --outfmt 6 --un CARD_filtered.faa
 cat ResFinder.faa CARD_filtered.faa > ResFinder+CARD.faa
 diamond makedb --in ResFinder+CARD.faa --db ResFinder+CARD --ignore-warnings
-diamond blastp -q dbs/ResFinderFG/ResFinder_FG_AA.faa --db ResFinder+CARD -o ResFinderFG_vs_ResFinder+CARD.blastp  --id 100 --query-cover 99 --subject-cover 99 --masking none --outfmt 6 --un ResFinderFG_unique.faa
+diamond blastp -q dbs/ResFinderFG/ResFinder_FG_AA.faa --db ResFinder+CARD -o ResFinderFG_vs_ResFinder+CARD.blastp  --id 100 --query-cover 99 --subject-cover 99 --masking none --max-target-seqs 0 --evalue 1 --sensitive --outfmt 6 --un ResFinderFG_unique.faa
 cat ResFinder.faa CARD_filtered.faa ResFinderFG_unique.faa > ResFinder+CARD+FG.faa
 diamond makedb --in ResFinder+CARD+FG.faa --db ResFinder+CARD+FG --ignore-warnings
-diamond blastp -q dbs/Other_sources.faa --db ResFinder+CARD+FG -o OS_vs_ResFinder+CARD+OS.blastp --id 100 --query-cover 99 --subject-cover 99 --masking none --outfmt 6 --un OS_unique.faa
+diamond blastp -q dbs/Other_sources.faa --db ResFinder+CARD+FG -o OS_vs_ResFinder+CARD+OS.blastp --id 100 --query-cover 99 --subject-cover 99 --masking none --max-target-seqs 0 --evalue 1 --sensitive --outfmt 6 --un OS_unique.faa
 cat ResFinder.faa CARD_filtered.faa ResFinderFG_unique.faa OS_unique.faa > ResFinder+CARD+FG+OS.faa
 diamond makedb --in ResFinder+CARD+FG+OS.faa --db ResFinder+CARD+FG+OS --ignore-warnings
 cp ResFinder+CARD+FG+OS.faa CLEVER.variants.faa
@@ -135,21 +135,21 @@ echo "Creating families database..."
 #diamond makedb --in dbs/ResFinder/all.faa --db ResFinder --ignore-warnings
 ## If this is an update to the database, do this:
 diamond makedb --in dbs/CLEVER/CLEVER.families.faa --db CLEVER --ignore-warnings
-diamond blastp -q dbs/ResFinder/all.faa --db CLEVER -o ResFinder_vs_CLEVER.blastp --id 90 --query-cover 90 --subject-cover 90 --masking none --outfmt 6 --un ResFinder_unique.faa
+diamond blastp -q dbs/ResFinder/all.faa --db CLEVER -o ResFinder_vs_CLEVER.blastp --id 90 --query-cover 90 --subject-cover 90 --masking none --max-target-seqs 0 --evalue 1 --sensitive --outfmt 6 --un ResFinder_unique.faa
 cd-hit -i ResFinder_unique.faa -o ResFinder_clustered.faa -c 0.9 -n 5 -aS 0.9 -aL 0.9 -d 0
 cat dbs/CLEVER/CLEVER.families.faa ResFinder_clustered.faa > ResFinder.faa
 diamond makedb --in ResFinder.faa --db ResFinder --ignore-warnings
-diamond blastp -q dbs/CARD/protein_fasta_protein_homolog_model.fasta --db ResFinder -o CARD_vs_ResFinder.blastp --id 90 --query-cover 90 --subject-cover 90 --masking none --outfmt 6 --un CARD_unique.faa
+diamond blastp -q dbs/CARD/protein_fasta_protein_homolog_model.fasta --db ResFinder -o CARD_vs_ResFinder.blastp --id 90 --query-cover 90 --subject-cover 90 --masking none --max-target-seqs 0 --evalue 1 --sensitive --outfmt 6 --un CARD_unique.faa
 diamond makedb --in dbs/CARD/not_ARGs.fasta --db CARD_NOT_ARGs --ignore-warnings
-diamond blastp -q CARD_unique.faa --db CARD_NOT_ARGs -o CARD_vs_CARD_NON_ARGs.blastp --id 70 --query-cover 70 --subject-cover 70 --masking none --outfmt 6 --un CARD_filtered.faa
+diamond blastp -q CARD_unique.faa --db CARD_NOT_ARGs -o CARD_vs_CARD_NON_ARGs.blastp --id 70 --query-cover 70 --subject-cover 70 --masking none --max-target-seqs 0 --evalue 1 --sensitive --outfmt 6 --un CARD_filtered.faa
 cd-hit -i CARD_filtered.faa -o CARD_clustered.faa -c 0.9 -n 5 -aS 0.9 -aL 0.9 -d 0
 cat dbs/CLEVER/CLEVER.families.faa ResFinder_clustered.faa CARD_clustered.faa > ResFinder+CARD.faa
 diamond makedb --in ResFinder+CARD.faa --db ResFinder+CARD --ignore-warnings
-diamond blastp -q dbs/ResFinderFG/ResFinder_FG_AA.faa --db ResFinder+CARD -o ResFinderFG_vs_ResFinder+CARD.blastp  --id 90 --query-cover 90 --subject-cover 90 --masking none --outfmt 6 --un ResFinderFG_unique.faa
+diamond blastp -q dbs/ResFinderFG/ResFinder_FG_AA.faa --db ResFinder+CARD -o ResFinderFG_vs_ResFinder+CARD.blastp  --id 90 --query-cover 90 --subject-cover 90 --masking none --max-target-seqs 0 --evalue 1 --sensitive --outfmt 6 --un ResFinderFG_unique.faa
 cd-hit -i ResFinderFG_unique.faa -o ResFinderFG_clustered.faa -c 0.9 -n 5 -aS 0.9 -aL 0.9 -d 0
 cat dbs/CLEVER/CLEVER.families.faa ResFinder_clustered.faa CARD_clustered.faa ResFinderFG_clustered.faa > ResFinder+CARD+FG.faa
 diamond makedb --in ResFinder+CARD+FG.faa --db ResFinder+CARD+FG --ignore-warnings
-diamond blastp -q dbs/Other_sources.faa --db ResFinder+CARD+FG -o OS_vs_ResFinder+CARD+OS.blastp --id 90 --query-cover 90 --subject-cover 90 --masking none --outfmt 6 --un OS_unique.faa
+diamond blastp -q dbs/Other_sources.faa --db ResFinder+CARD+FG -o OS_vs_ResFinder+CARD+OS.blastp --id 90 --query-cover 90 --subject-cover 90 --masking none --max-target-seqs 0 --evalue 1 --sensitive --outfmt 6 --un OS_unique.faa
 cd-hit -i OS_unique.faa -o OS_clustered.faa -c 0.9 -n 5 -aS 0.9 -aL 0.9 -d 0
 cat dbs/CLEVER/CLEVER.families.faa ResFinder_clustered.faa CARD_clustered.faa ResFinderFG_clustered.faa OS_clustered.faa > ResFinder+CARD+FG+OS.faa
 diamond makedb --in ResFinder+CARD+FG+OS.faa --db ResFinder+CARD+FG+OS --ignore-warnings
@@ -165,21 +165,21 @@ echo "Creating lineages database..."
 #diamond makedb --in dbs/ResFinder/all.faa --db ResFinder --ignore-warnings
 ## If this is an update to the database, do this:
 diamond makedb --in dbs/CLEVER/CLEVER.lineages.faa --db CLEVER --ignore-warnings
-diamond blastp -q dbs/ResFinder/all.faa --db CLEVER -o ResFinder_vs_CLEVER.blastp --id 70 --query-cover 70 --subject-cover 70 --masking none --outfmt 6 --un ResFinder_unique.faa
+diamond blastp -q dbs/ResFinder/all.faa --db CLEVER -o ResFinder_vs_CLEVER.blastp --id 70 --query-cover 70 --subject-cover 70 --masking none --max-target-seqs 0 --evalue 1 --sensitive --outfmt 6 --un ResFinder_unique.faa
 cd-hit -i ResFinder_unique.faa -o ResFinder_clustered.faa -c 0.7 -n 4 -aS 0.7 -aL 0.7 -d 0
 cat dbs/CLEVER/CLEVER.lineages.faa ResFinder_clustered.faa > ResFinder.faa
 diamond makedb --in ResFinder.faa --db ResFinder --ignore-warnings
-diamond blastp -q dbs/CARD/protein_fasta_protein_homolog_model.fasta --db ResFinder -o CARD_vs_ResFinder.blastp --id 70 --query-cover 70 --subject-cover 70 --masking none --outfmt 6 --un CARD_unique.faa
+diamond blastp -q dbs/CARD/protein_fasta_protein_homolog_model.fasta --db ResFinder -o CARD_vs_ResFinder.blastp --id 70 --query-cover 70 --subject-cover 70 --masking none --max-target-seqs 0 --evalue 1 --sensitive --outfmt 6 --un CARD_unique.faa
 diamond makedb --in dbs/CARD/not_ARGs.fasta --db CARD_NOT_ARGs --ignore-warnings
-diamond blastp -q CARD_unique.faa --db CARD_NOT_ARGs -o CARD_vs_CARD_NON_ARGs.blastp --id 70 --query-cover 70 --subject-cover 70 --masking none --outfmt 6 --un CARD_filtered.faa
+diamond blastp -q CARD_unique.faa --db CARD_NOT_ARGs -o CARD_vs_CARD_NON_ARGs.blastp --id 70 --query-cover 70 --subject-cover 70 --masking none --max-target-seqs 0 --evalue 1 --sensitive --outfmt 6 --un CARD_filtered.faa
 cd-hit -i CARD_filtered.faa -o CARD_clustered.faa -c 0.7 -n 4 -aS 0.7 -aL 0.7 -d 0
 cat dbs/CLEVER/CLEVER.lineages.faa ResFinder_clustered.faa CARD_clustered.faa > ResFinder+CARD.faa
 diamond makedb --in ResFinder+CARD.faa --db ResFinder+CARD --ignore-warnings
-diamond blastp -q dbs/ResFinderFG/ResFinder_FG_AA.faa --db ResFinder+CARD -o ResFinderFG_vs_ResFinder+CARD.blastp  --id 70 --query-cover 70 --subject-cover 70 --masking none --outfmt 6 --un ResFinderFG_unique.faa
+diamond blastp -q dbs/ResFinderFG/ResFinder_FG_AA.faa --db ResFinder+CARD -o ResFinderFG_vs_ResFinder+CARD.blastp  --id 70 --query-cover 70 --subject-cover 70 --masking none --max-target-seqs 0 --evalue 1 --sensitive --outfmt 6 --un ResFinderFG_unique.faa
 cd-hit -i ResFinderFG_unique.faa -o ResFinderFG_clustered.faa -c 0.7 -n 4 -aS 0.7 -aL 0.7 -d 0
 cat dbs/CLEVER/CLEVER.lineages.faa ResFinder_clustered.faa CARD_clustered.faa ResFinderFG_clustered.faa > ResFinder+CARD+FG.faa
 diamond makedb --in ResFinder+CARD+FG.faa --db ResFinder+CARD+FG --ignore-warnings
-diamond blastp -q dbs/Other_sources.faa --db ResFinder+CARD+FG -o OS_vs_ResFinder+CARD+FG.blastp --id 70 --query-cover 70 --subject-cover 70 --masking none --outfmt 6 --un OS_unique.faa
+diamond blastp -q dbs/Other_sources.faa --db ResFinder+CARD+FG -o OS_vs_ResFinder+CARD+FG.blastp --id 70 --query-cover 70 --subject-cover 70 --masking none --max-target-seqs 0 --evalue 1 --sensitive --outfmt 6 --un OS_unique.faa
 cd-hit -i OS_unique.faa -o OS_clustered.faa -c 0.7 -n 4 -aS 0.7 -aL 0.7 -d 0
 cat dbs/CLEVER/CLEVER.lineages.faa ResFinder_clustered.faa CARD_clustered.faa ResFinderFG_clustered.faa OS_clustered.faa > ResFinder+CARD+FG+OS.faa
 diamond makedb --in ResFinder+CARD+FG+OS.faa --db ResFinder+CARD+FG+OS --ignore-warnings
@@ -216,12 +216,12 @@ perl build-scripts/filter_blast.pl CLEVER.variants.vs.PLSDB.tblastn 98
 echo "Annotating ARG variants against CLEVER families..."
 #diamond makedb --in dbs/CLEVER/CLEVER.families.faa --db CLEVER.families --ignore-warnings
 diamond makedb --in CLEVER.families.faa --db CLEVER.families --ignore-warnings
-diamond blastp -q CLEVER.variants.faa --db CLEVER.families -o CLEVER_vs_families.blastp --id 90 --query-cover 90 --subject-cover 90 --masking none --outfmt 6
+diamond blastp -q CLEVER.variants.faa --db CLEVER.families -o CLEVER_vs_families.blastp --id 90 --query-cover 90 --subject-cover 90 --masking none --max-target-seqs 0 --evalue 1 --sensitive --outfmt 6
 perl build-scripts/reorder_diamond_out.pl CLEVER_vs_families.blastp > CLEVER_vs_families.filtered.blastp
 echo "Annotating ARG variants against CLEVER lineages..."
 #diamond makedb --in dbs/CLEVER/CLEVER.lineages.faa --db CLEVER.lineages --ignore-warnings
 diamond makedb --in CLEVER.lineages.faa --db CLEVER.lineages --ignore-warnings
-diamond blastp -q CLEVER.variants.faa --db CLEVER.lineages -o CLEVER_vs_lineages.blastp --id 70 --query-cover 70 --subject-cover 70 --masking none --outfmt 6
+diamond blastp -q CLEVER.variants.faa --db CLEVER.lineages -o CLEVER_vs_lineages.blastp --id 70 --query-cover 70 --subject-cover 70 --masking none --max-target-seqs 0 --evalue 1 --sensitive --outfmt 6
 perl build-scripts/reorder_diamond_out.pl CLEVER_vs_lineages.blastp > CLEVER_vs_lineages.filtered.blastp
 echo "Consolidating annotations at family and lineage levels..."
 perl build-scripts/annotate_args.pl CLEVER_vs_families.filtered.blastp blacklist.txt $VERSION CLEVER_vs_lineages.filtered.blastp
@@ -230,9 +230,9 @@ perl build-scripts/annotate_args.pl CLEVER_vs_families.filtered.blastp blacklist
 perl build-scripts/create_annotation_file.pl CLEVER_vs_families.filtered.blastp.genelist.txt CLEVER_vs_families.filtered.blastp.mapping.txt dbs/CLEVER/$CLEVER_ANNOTATION  > clever_annotation_manformat.txt
 
 ## Update headers of FASTA files
-perl build-scripts/rename_fasta.pl CLEVER.variants.faa clever_annotation_manformat.txt CLEVER_vs_families.filtered.blastp.mapping.txt CLEVER.variants.vs.PLSDB.tblastn.hits.txt blacklist.txt $VERSION > CLEVER.variants.final.faa
-perl build-scripts/rename_fasta.pl CLEVER.families.faa clever_annotation_manformat.txt CLEVER_vs_families.filtered.blastp.mapping.txt CLEVER.families.vs.PLSDB.tblastn.hits.txt blacklist.txt $VERSION > CLEVER.families.final.faa
-perl build-scripts/rename_fasta.pl CLEVER.lineages.faa clever_annotation_manformat.txt CLEVER_vs_families.filtered.blastp.mapping.txt CLEVER.lineages.vs.PLSDB.tblastn.hits.txt blacklist.txt $VERSION > CLEVER.lineages.final.faa
+perl build-scripts/rename_fasta.pl CLEVER.variants.faa clever_annotation_manformat.txt CLEVER_vs_families.filtered.blastp.mapping.txt CLEVER.variants.vs.PLSDB.tblastn.hits.txt blacklist.txt dbs/Other_sources/mapping_to_classes.txt $VERSION > CLEVER.variants.final.faa
+perl build-scripts/rename_fasta.pl CLEVER.families.faa clever_annotation_manformat.txt CLEVER_vs_families.filtered.blastp.mapping.txt CLEVER.families.vs.PLSDB.tblastn.hits.txt blacklist.txt dbs/Other_sources/mapping_to_classes.txt $VERSION > CLEVER.families.final.faa
+perl build-scripts/rename_fasta.pl CLEVER.lineages.faa clever_annotation_manformat.txt CLEVER_vs_families.filtered.blastp.mapping.txt CLEVER.lineages.vs.PLSDB.tblastn.hits.txt blacklist.txt dbs/Other_sources/mapping_to_classes.txt $VERSION > CLEVER.lineages.final.faa
 
 ## Finalize CLEVER build
 echo "Finalizing CLEVER build..."
