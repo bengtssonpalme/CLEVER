@@ -79,7 +79,7 @@ while ($line = <ANNOT>) {
                 $maxVarNum{"$classB-$famNumber"} = $variantNumber;
             }
             $familyNumMap{$entry} = $famNumber;
-            $varNumMap{$entry} = $varNum{"$class-$famNumber"};
+            $varNumMap{$entry} = $variantNumber;
         } 
 
         $repMap{$entry} = $clusterRep;
@@ -134,14 +134,14 @@ while ($line = <MAPPING>) {
     if (defined($children{$familyID})) {
         $children{$familyID} = $children{$familyID} . "\n" . $variantID;
     } else {
-        $children{$familyID} = $familyID;
+        $children{$familyID} = $variantID;
     }
     if (defined($grandchildren{$lineageID})) {
         $grandchildren{$lineageID} = $grandchildren{$lineageID} . "\n" . $variantID;
     } else {
         $grandchildren{$lineageID} = $variantID;
     }
-    $familyMap{$gene} = $familyID;
+    $familyMap{$variantID} = $familyID;
 }
 close MAPPING;
 
@@ -194,6 +194,12 @@ while ($line = <FASTA>) {
         $verified = "";
         $full_accession = "";
         $accession = "";
+        $argName = "";
+        $cleverID = "";
+        $newaccession = "";
+        $lineageID = "";
+        $rep = "";
+        $newname = "";
 
         ($arg) = split(' ', $line);
         $arg = substr($arg, 1);
@@ -375,6 +381,7 @@ while ($line = <FASTA>) {
             if ($newname eq "") {
                 $newname = $argMap{"$rep"};
             }
+            
             if ($class eq "") {
                 $class = $classMap{"$rep"};
                 print STDERR "No class found for $arg Chosing class of rep ($rep): $classMap{$rep}\n";
@@ -392,7 +399,7 @@ while ($line = <FASTA>) {
         }
 
         if ($newname eq "") {
-            $newname = $argName;
+            $newname = $argName; 
         }
         if ($class eq "") {
             ($class,$unused) = split('-', $cleverID);
@@ -405,7 +412,7 @@ while ($line = <FASTA>) {
             if (defined($lineageMap{"$arg"})) {
                 $lineageID = $lineageMap{"$arg"};
                 ($linversion, $lingenename, $linclass) = split('\|', $lineageID);
-                ($class, $no) = split('-'. $linclass);
+                ($class, $no) = split('-', $linclass);
             }
             print STDERR "No class found for $arg Deriving class from lineage ($lineageID): $class\n";
         }
@@ -416,10 +423,12 @@ while ($line = <FASTA>) {
                 $established = "L";
             }
         }
-        if (substr($attr, 1, 1) eq "M") {
-            $mobile = "M";
-        } else {
-            $mobile = "C";
+        if ($attr ne "") {
+            if (substr($attr, 1, 1) eq "M") {
+                $mobile = "M";
+            } else {
+                $mobile = "C";
+            }
         }
         if ($verified eq "") {
             if ($attr ne "") {
@@ -491,6 +500,32 @@ while ($line = <FASTA>) {
             $familyNumber = $familyNumMap{"$arg"};
             $variantNumber = $varNumMap{"$arg"};
 
+            $correctFamily = "";
+            if (($familyNumber eq "") && ($family ne "")) {
+                if (defined($correctedFamilies{$family})) {
+                    $correctFamily = $family;
+                    $family = $correctedFamilies{$family};
+                }
+                if ($family =~ m/[A-Za-z]*-[0-9]*_[0-9]*/) {
+                    ($xclassname, $famandclass) = split('-', $family);
+                    ($familyNumber, $variantNumber) = split('_', $famandclass);
+                    #$variantNumber =~ s/[^0-9].*//;
+                    #$varNumMap{"$arg"} = $variantNumber;
+                    $variantNumber = $maxVarNum{"$class-$familyNumber"} + 1;
+                    $maxVarNum{"$class-$familyNumber"} = $variantNumber;
+                    $varNumMap{$arg} = $maxVarNum{"$class-$familyNumber"};
+                    $familyNumMap{"$arg"} = $familyNumber;
+                    
+                }
+            }
+            if (($familyNumber eq "") && ($newname ne "")) {
+                if ($newname =~ m/[A-Za-z]*-[0-9]*_[0-9]*/) {
+                    ($xclassname, $famandclass) = split('-', $newname);
+                    ($familyNumber, $butnotvariantNumber) = split('_', $famandclass);
+                    $familyNumMap{"$arg"} = $familyNumber;
+                }
+            }
+
             $addFam = 0;
             if ($familyNumber eq "") {
                 $familyNumber = $maxFamilyNum{$class} + 1;
@@ -505,11 +540,14 @@ while ($line = <FASTA>) {
                 $varNumMap{$arg} = $maxVarNum{"$class-$familyNumber"};
                 #print STDERR "$arg\t$class-$familyNumber\t$varNumMap{$arg}\t$variantNumber\n";
             }
+            if ($correctFamily ne "") {
+                $correctedFamilies{$correctFamily} = $class . "-" . $familyNumber . "_" . $variantNumber;
+            }
         }
 
         if ($do_not_change_cleverID == 0) {
             if (substr($newname, 0, 1) eq "!") {
-                $newname = substr($newname, 7);
+                $newname = substr($newname, 1);
                 $newaccession = "C" . $cleverversion . "|" . "~" . $class . "-" . $familyNumber . "_" . $variantNumber . "|" . $class . "-" . $familyNumber . "_" . $variantNumber . "|" . $established . $mobile . $verified . "|" . $source . "|" . $full_accession;
             } else {
                 if ($cleverID ne "") {
@@ -517,12 +555,17 @@ while ($line = <FASTA>) {
                     ($cversion, $cargName, $ccleverID, $cattr, $csource, $caccession) = split('\|',$arg);
                     $newaccession = "C" . $cleverversion . "|" . $cargName . "|" . $ccleverID. "|" . $established . $mobile . $verified . "|" . $csource  . "|" . $caccession;
                 } else {
-                    $newaccession = "C" . $cleverversion . "|" . $newname . "|" . $class . "-" . $familyNumber . "_" . $variantNumber . "|" . $established . $mobile . $verified . "|" . $source . "|" . $full_accession;
+                    if ($newname =~ m/[A-Za-z]*-[0-9]*_[0-9]*/) {
+                        $newaccession = "C" . $cleverversion . "|" . "~" . $newname . "|" . $class . "-" . $familyNumber . "_" . $variantNumber . "|" . $established . $mobile . $verified . "|" . $source . "|" . $full_accession;
+                    } else {
+                        $newaccession = "C" . $cleverversion . "|" . $newname . "|" . $class . "-" . $familyNumber . "_" . $variantNumber . "|" . $established . $mobile . $verified . "|" . $source . "|" . $full_accession; 
+                    }
+                    
                 }
             }
         } else {
             if (substr($newname, 0, 1) eq "!") {
-                $newname = substr($newname, 7);
+                $newname = substr($newname, 1);
                 $newaccession = "C" . $cleverversion . "|" . "~" . $class . "-" . $familyNumber . "_" . $variantNumber . "|" . $cleverID . "|" . $established . $mobile . $verified . "|" . $source . "|" . $full_accession;
             } else {
                 if ($cleverID ne "") {
@@ -530,7 +573,11 @@ while ($line = <FASTA>) {
                     ($cversion, $cargName, $ccleverID, $cattr, $csource, $caccession) = split('\|',$arg);
                     $newaccession = "C" . $cleverversion . "|" . $cargName . "|" . $cleverID . "|" . $established . $mobile . $verified . "|" . $csource  . "|" . $caccession;
                 } else {
-                    $newaccession = "C" . $cleverversion . "|" . $newname . "|" . $cleverID . "|" . $established . $mobile . $verified . "|" . $source . "|" . $full_accession;
+                    if ($newname =~ m/[A-Za-z]*-[0-9]*_[0-9]*/) {
+                        $newaccession = "C" . $cleverversion . "|" . "~" . $newname . "|" . $cleverID . "|" . $established . $mobile . $verified . "|" . $source . "|" . $full_accession;
+                    } else {
+                        $newaccession = "C" . $cleverversion . "|" . $newname . "|" . $cleverID . "|" . $established . $mobile . $verified . "|" . $source . "|" . $full_accession;
+                    }
                 }
             }
         }

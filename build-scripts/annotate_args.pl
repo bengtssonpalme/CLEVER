@@ -49,11 +49,15 @@ while ($line = <INPUT>) {
             if ($famNumber > $famNo{$class}) {
                 $famNo{$class} = $famNumber;
             }
+        } else {
+            $famNo{$class} = $famNumber;
         }
-        if (defined($geneNo{$family})) {
-            if ($variantNumber > $geneNo{$family}) {
-                $geneNo{$family} = $variantNumber;
+        if (defined($geneNo{"$class-$famNumber"})) {
+            if ($variantNumber > $geneNo{"$class-$famNumber"}) {
+                $geneNo{"$class-$famNumber"} = $variantNumber;
             }
+        } else {
+            $geneNo{"$class-$famNumber"} = $variantNumber;
         }
     }
     
@@ -65,7 +69,7 @@ while ($line = <LINPUT>) {
     chomp($line);
     (@items) = split("\t", $line);
     $arg = @items[0];
-    if (not(defined($foundARGsLineage{$arg}))) {
+    if (not(defined($foundARGLineage{$arg}))) {
         $foundARGLineage{$arg} = 1;
         $lineage = @items[1];
         $id = @items[2];
@@ -100,11 +104,11 @@ foreach $family (@families) {
         unshift(@args, $family);
     }
     foreach $arg (@args) {
-        $class = "";
+        $arg_class = "";
         if (substr($arg, 0, 2) =~ m/C[0-9]/) {
             ## This is an existing CLEVER gene
             ($version, $argName, $cleverID, $attr, $source, $accession) = split('\|',$arg);
-            ($class) = split("-",$cleverID);
+            ($arg_class) = split("-",$cleverID);
             push(@argNames, $argName);
             push(@accessions, $accession);
         } else {
@@ -151,17 +155,17 @@ foreach $family (@families) {
             }
             if ($source eq "ResFinderFG") {
                 #ResFinderFG-beta_lactamase|KU545081.1|feces|ATM
-                ($class,$accession,$aro,$source,$antibiotic) = split('\|', $rest);
-                $argName = "!" . $class;
+                ($arg_class,$accession,$aro,$sourcematerial,$antibiotic) = split('\|', $rest);
+                $argName = "!" . $arg_class;
                 $full_accession = $accession;
                 push(@argNames, $argName);
                 push(@accessions, $full_accession);
             }
             if (($source eq "fARGene") || ($source eq "IndaDiaz_2023")) {
                 #fARGene-20k_concatenated-long-orfs_SFKQ01000019.1_seq1@@@methyltransferase_grp2_1
-                ($seqinfo, $class)= split('@@@', $rest);
+                ($seqinfo, $arg_class)= split('@@@', $rest);
                 ($junk1,$junk2,$accession,$variant) = split('_', $seqinfo);
-                $argName = "!" . $class;
+                $argName = "!" . $arg_class;
                 $full_accession = $accession;
                 push(@argNames, $argName);
                 push(@accessions, $full_accession);
@@ -169,34 +173,34 @@ foreach $family (@families) {
             if ($source eq "Victor_2025") {
                 #HiAAMG_A_sequ1ence
                 ($seqinfo, $junk) = split('_seq', $rest);
-                $class = substr($seqinfo, 3);
+                $arg_class = substr($seqinfo, 3);
                 $accession = $rest;
-                $argName = "!" . $class;
+                $argName = "!" . $arg_class;
                 $full_accession = $accession;
                 push(@argNames, $argName);
                 push(@accessions, $full_accession);
             }
             if ($source eq "Victor_2025b") {
                 #Class_ANSF1A
-                ($class, $junk) = split('NSF', $rest);
+                ($arg_class, $junk) = split('NSF', $rest);
                 $accession = $rest;
-                $argName = "!" . $class;
+                $argName = "!" . $arg_class;
                 $full_accession = $accession;
                 push(@argNames, $argName);
                 push(@accessions, $full_accession);
             }
             if ($source eq "Li_2025") {
                 #class_a|cattle|k141_371442_seq1_1
-                ($class, $animal, $accession) = split('\|', $rest);
-                $argName = "!" . $class;
+                ($arg_class, $animal, $accession) = split('\|', $rest);
+                $argName = "!" . $arg_class;
                 $full_accession = $accession;
                 push(@argNames, $argName);
                 push(@accessions, $full_accession);
             }
             if ($source eq "Sommerville_2026") {
                 #>retrieved-translated_gene_catalog_Gene026555_seq1_1|class_A
-                ($accession,$class) = split('\|', $rest);
-                $argName = "!" . $class;
+                ($accession,$arg_class) = split('\|', $rest);
+                $argName = "!" . $arg_class;
                 $full_accession = $accession;
                 push(@argNames, $argName);
                 push(@accessions, $full_accession);
@@ -204,7 +208,7 @@ foreach $family (@families) {
             if (($source eq "Mustard") || ($source eq "Ruppe_2019")) {
                 #1|311066|3|Human-Microbiome-3.9M-Gene-Catalog-(metahit-v2)|MC3.MG12.AS1.GP1.C65190.G5|aac2
                 ($x, $y, $z, $refcatalog, $accession, $class)= split('\|', $rest);
-                $argName = "!" . $class;
+                $argName = "!" . $arg_class;
                 $full_accession = $accession;
                 push(@argNames, $argName);
                 push(@accessions, $full_accession);
@@ -212,7 +216,7 @@ foreach $family (@families) {
             if ($source eq "Wang_2025") {
                 #DfrA52_XPO54507.1
                 ($geneName, $accession)= split('_', $rest);
-                $class = lc(substr($geneName, 0 ,3));
+                $arg_class = lc(substr($geneName, 0 ,3));
                 $argName = "!" . $geneName;
                 $full_accession = $accession;
                 push(@argNames, $argName);
@@ -232,10 +236,19 @@ foreach $family (@families) {
     if (scalar(@argNames) < 3) {
         $agreedName = @argNames[0];
         if ((@argNames[0] eq "") || (substr(@argNames[0],0,1) eq "!")) {
-            if ((@argNames[1] ne "") || (substr(@argNames[1],0,1) eq "!")) {
-                $agreedName = @argNames[1];
-                print STDERR "Family $family lacked a gene name for the reference sequence. Settled on $agreedName for gene. You might want to check this entry manually.\n";
-                print LOG "$family : Family $family lacked a gene name for the reference sequence. Settled on $agreedName for gene. You might want to check this entry manually.\n";
+            if (scalar(@argNames) > 1) {
+                if ((@argNames[1] ne "") && (substr(@argNames[1],0,1) ne "!")) {
+                    $agreedName = @argNames[1];
+                    print STDERR "Family $family lacked a gene name for the reference sequence. Settled on $agreedName for gene. You might want to check this entry manually.\n";
+                    print LOG "$family : Family $family lacked a gene name for the reference sequence. Settled on $agreedName for gene. You might want to check this entry manually.\n";
+                } else {
+                    $agreedName = "!";
+                    $mainName = "!";
+                    if ($family !~ m/HASH/) {
+                        print STDERR "Family $family lacked any valid gene names for any sequence. You might want to check this entry manually.\n";
+                        print LOG "$family : Family $family lacked any valid gene names for any sequence. You might want to check this entry manually.\n";
+                    }
+                }
             } else {
                 $agreedName = "!";
                 $mainName = "!";
