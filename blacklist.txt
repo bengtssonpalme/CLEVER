@@ -46,6 +46,7 @@ lmrA
 marA
 marR
 mecI
+MecI_rep
 mecR1
 mepR
 MexL
