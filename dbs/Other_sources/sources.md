@@ -15,7 +15,11 @@
 (https://zenodo.org/records/15025586)
 - Sommerville_2026.faa
 
-  Sommerville V, Meola M, Nunes-Richards A, et al. Microbial community dynamics in a traditional Swiss mountain cheese over 142 years of cheesemaking. bioRxiv, 2026.02.26.708305 (2026). doi:10.64898/2026.02.26.708305
+  Somerville V, Meola M, Nunes-Richards A, et al. Microbial community dynamics in a traditional Swiss mountain cheese over 142 years of cheesemaking. bioRxiv, 2026.02.26.708305 (2026). doi:10.64898/2026.02.26.708305
+
+- CocheMiranda_2026.faa
+
+  Coche-Miranda J, Arros P, Canales N, et al. Antarctic soil microbiomes encode structurally conserved and phylogenetically diverse beta-lactamases. iMetaOmics e70118 (2026). doi:10.1002/imo2.70118 (Only the ARGs that passed additional fARGene verification)
 
 ## PCM
 - Ruppe_2019.faa
