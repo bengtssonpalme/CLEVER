@@ -106,7 +106,8 @@ The definitions of these concepts are as follows:
 - Victor MP, Øvreås L, Marathe NP. Characterization of known and novel clinically important antibiotic resistance genes and novel microbes from wastewater-impacted high Arctic fjord sediments. Sci Total Environ. 2025;985:179699. doi:10.1016/j.scitotenv.2025.179699
 - Li B, Jiang L, Johnson T, et al. Global health risks lurking in livestock resistome. Sci Adv. 2025;11(26):eadt8073. doi:10.1126/sciadv.adt8073 (https://zenodo.org/records/15025586)
 - Sommerville V, Meola M, Nunes-Richards A, et al. Microbial community dynamics in a traditional Swiss mountain cheese over 142 years of cheesemaking. bioRxiv, 2026.02.26.708305 (2026). doi:10.64898/2026.02.26.708305
+- Coche-Miranda J, Arros P, Canales N, et al. Antarctic soil microbiomes encode structurally conserved and phylogenetically diverse beta-lactamases. iMetaOmics e70118 (2026). doi:10.1002/imo2.70118
 
 ### Version 2.0 also adds additional sources of MUSTARD/PCM predicted ARGs:
-- Ruppé E, Ghozlane A, Tap J, et al. Prediction of the intestinal resistome by a three-dimensional structure-based method. Nat Microbiol. 2019;4(1):112-123. doi:10.1038/s41564-018-0292-6
+- Ruppé E, Ghozlane A, Tap J, et al. Prediction of the intestinal resistome by a three-dimensional structure-based method. Nat Microbiol. 2019;4(1):112-123. doi:10.1038/s41564-018-0292-6 (Only the classes that have experimental verification supporting them)
 - Wang K, Xu J, Li X, et al. Evolutionary selection of trimethoprim-resistant dfrA genes in lytic phages affects phage and host fitness during infection. Sci Adv. 2025;11(39):eadt4817. doi:10.1126/sciadv.adt4817
