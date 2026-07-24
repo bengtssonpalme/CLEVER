@@ -86,6 +86,9 @@ else
   echo "   - Sommerville 2026"
   sed -i "/^>Sommerville_2026-/! s/^>/>Sommerville_2026-/" dbs/Other_sources/Sommerville_2026.faa
 
+  echo "   - Coche-Miranda 2026"
+  sed -i "/^>CocheMiranda_2026-/! s/^>/>CocheMiranda_2026-/" dbs/Other_sources/CocheMiranda_2026.faa
+
   ## Prepare Mustard predictions
   #https://mgps.eu/Mustard/db/all_ard.zip
   echo "   - Ruppe 2019"
