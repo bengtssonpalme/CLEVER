@@ -1,0 +1,67 @@
+CLEVER Class	Class name	Resistance profile
+aac	aminoglycoside acetyltransferase (no subclass)	aminoglycosides
+aac2p	aminoglycoside N(2')-acetyltransferase	aminoglycosides
+aac3	aminoglycoside N(3)-acetyltransferase	aminoglycosides
+aac6p	aminoglycoside N(6')-acetyltransferase	aminoglycosides
+aad	aminoglycoside 6-adenylyltransferase	aminoglycosides
+adt	aminoglycoside resistance gene (no class)	aminoglycosides
+ant	aminoglycoside O-nucleotidyltransferase	aminoglycosides
+aph	aminoglycoside O-phosphotransferase (no subclass)	aminoglycosides
+aph2b	aminoglycoside 2''-O-phosphotransferase	aminoglycosides
+aph3b	aminoglycoside 3''-O-phosphotransferase	aminoglycosides
+aph3p	aminoglycoside 3'-O-phosphotransferase	aminoglycosides
+aph4	aminoglycoside 4-O-phosphotransferase	aminoglycosides
+aph6	aminoglycoside 6-O-phosphotransferase	aminoglycosides
+aph7b	aminoglycoside 7''-O-phosphotransferase	aminoglycosides
+aph9	aminoglycoside 9-O-phosphotransferase	aminoglycosides
+arr	rifampin ADP-ribosylating transferase	rifampin
+blaA	class A beta-lactamase (no subclass)	beta-lactams
+blaA1	class A1 beta-lactamase	beta-lactams
+blaB	class B beta-lactamase (no subclass)	beta-lactams
+blaB1	class B1 beta-lactamase	beta-lactams
+blaB2	class B2 beta-lactamase	beta-lactams
+blaB3	class B3 beta-lactamase	beta-lactams
+blaC	class C beta-lactamase (no subclass)	beta-lactams
+blaC1	class C1 beta-lactamase	beta-lactams
+blaC2	class C2 beta-lactamase	beta-lactams
+blaC3	class C3 beta-lactamase	beta-lactams
+blaD	class D beta-lactamase (no subclass)	beta-lactams
+blaD1	class D1 beta-lactamase	beta-lactams
+blaD2	class D2 beta-lactamase	beta-lactams
+blaX	beta-lactamase (no class)	beta-lactams
+cat	chloramphenicol acetyltransferase	chloramphenicol
+cfr	23S ribosomal RNA methyltransferase	macrolides,streptogramines,lincosamide
+cml	chloramphenicol exporter	chloramphenicol
+dfr	trimethoprim-resistant dihydrofolate reductase	trimethoprims
+dhr	trimethoprim-resistant dihydrofolate reductase	trimethoprims
+dpr	sulfamethoxazole resistance gene	sulfonamides
+ere	erythromycin esterase	macrolides
+erm	rRNA methyltransferase	macrolides,streptogramines,lincosamide
+fos	fosfomycin thiol transferase	fosfomycin
+lnu	lincosamide nucleotidyltransferase	macrolides,streptogramines,lincosamide
+lsa	LSA ABC-F subfamily protein	macrolides,streptogramines,lincosamide
+mcr	MCR phosphoethanolamine transferase	polymyxins
+mec	methicillin resistant PBP	beta-lactams
+mex	resistance-nodulation-cell division (RND) antibiotic efflux pump	multidrug-exporter
+misc	miscellaneous ARGs	multiple
+mph	macrolide 2'-phosphotransferase	macrolides,streptogramines,lincosamide
+msr	ABC-F binding cassette ribosomal protection protein	macrolides,streptogramines,lincosamide
+nim	nitroimidazole reductase	nitroimidazoles
+omp	outer membrane porin	beta-lactams
+opr	outer membrane factor protein	multidrug-exporter
+pbp	penicillin-binding protein	beta-lactams
+qnr	quinolone resistance protein (qnr)	quinolones
+rmt	16S rRNA methyltransferase	aminoglycosides
+sul	sulfonamide resistant dihydropteroate synthase	sulfonamides
+tet	tetracycline resistance gene (no class)	tetracyclines
+tetEFF	tetracycline efflux pump	tetracyclines
+tetEFF1	tetracycline efflux pump	tetracyclines
+tetEFF2	tetracycline efflux pump	tetracyclines
+tetRPG	tetracycline ribosomal protection gene	tetracyclines
+tetX	tetracycline inactivation enzyme	tetracyclines
+tran	transporter (no class)	multidrug-exporter
+unc	unclassified ARG	unclassified
+van	vancomycin resistance gene	vancomycin
+vat	streptogramin vat acetyltransferase	macrolides,streptogramines,lincosamide
+vga	VGA ABC-F subfamily protein 	macrolides,streptogramines,lincosamide
+vgb	streptogramin vgb lyase	macrolides,streptogramines,lincosamide
